@@ -1,0 +1,23 @@
+{
+  "name": "blog-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc && node index.js"
+  },
+  "dependencies": {
+    "koa": "^2.2.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-multer": "^1.0.1",
+    "koa-router": "^7.2.0",
+    "reflect-metadata": "^0.1.10",
+    "routing-controllers": "^0.7.0-alpha.14"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.0.39",
+    "@types/koa-bodyparser": "^3.0.23",
+    "@types/koa-router": "^7.0.22"
+  }
+}
