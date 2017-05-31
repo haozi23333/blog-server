@@ -5,6 +5,7 @@
     ],
     "jsRules": {},
     "rules": {
+        "object-literal-sort-keys": false,
         "adjacent-overload-signatures": true,
         "align": {
             "options": [
@@ -65,16 +66,7 @@
         "no-bitwise": true,
         "no-conditional-assignment": true,
         "no-consecutive-blank-lines": true,
-        "no-console": {
-            "options": [
-                "debug",
-                "info",
-                "log",
-                "time",
-                "timeEnd",
-                "trace"
-            ]
-        },
+        "no-console": false,
         "no-construct": true,
         "no-debugger": true,
         "no-duplicate-super": true,
@@ -103,8 +95,6 @@
         "object-literal-key-quotes": {
             "options": ["consistent-as-needed"]
         },
-        "object-literal-shorthand": true,
-        "object-literal-sort-keys": true,
         "one-line": {
             "options": [
                 "check-catch",
@@ -123,12 +113,7 @@
                 "allow-named-functions"
             ]
         },
-        "ordered-imports": {
-            "options": {
-                "import-sources-order": "case-insensitive",
-                "named-imports-order": "case-insensitive"
-            }
-        },
+        "ordered-imports": false,
         "prefer-const": true,
         "prefer-for-of": true,
         "quotemark": {
