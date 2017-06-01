@@ -8,4 +8,5 @@ createKoaServer({
     controllers: [__dirname + "/controllers/**/*.js"],
     middlewares: [__dirname + "/middlewares/**/*.js"],
     interceptors: [__dirname + "/interceptors/**/*.js"],
+    validation: false,
 }).listen(3000)

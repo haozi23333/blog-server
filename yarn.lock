@@ -76,6 +76,12 @@
   version "7.0.22"
   resolved "http://registry.npm.taobao.org/@types/node/download/@types/node-7.0.22.tgz#4593f4d828bdd612929478ea40c67b4f403ca255"
 
+"@types/uuid":
+  version "2.0.29"
+  resolved "http://registry.npm.taobao.org/@types/uuid/download/@types/uuid-2.0.29.tgz#939a198ab73567f811ab84f670d2be9c25addd41"
+  dependencies:
+    "@types/node" "*"
+
 abbrev@1:
   version "1.1.0"
   resolved "http://registry.npm.taobao.org/abbrev/download/abbrev-1.1.0.tgz#d0554c2256636e2f56e7c2e5ad183f859428d81f"
@@ -147,7 +153,7 @@ class-transformer@~0.1.6:
   version "0.1.6"
   resolved "http://registry.npm.taobao.org/class-transformer/download/class-transformer-0.1.6.tgz#1139c149311c0c84ded3c00e2a879e3479f60fa0"
 
-class-validator@^0.7.0:
+class-validator, class-validator@^0.7.0:
   version "0.7.0"
   resolved "http://registry.npm.taobao.org/class-validator/download/class-validator-0.7.0.tgz#a45b96aaa2154d06efda1cac1061b0adf69ea55e"
   dependencies:
@@ -542,6 +548,10 @@ negotiator@0.6.1:
   version "0.6.1"
   resolved "http://registry.npm.taobao.org/negotiator/download/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
 
+node-uuid:
+  version "1.4.8"
+  resolved "http://registry.npm.taobao.org/node-uuid/download/node-uuid-1.4.8.tgz#b040eb0923968afabf8d32fb1f17f1167fdab907"
+
 nopt@~2.1.1:
   version "2.1.2"
   resolved "http://registry.npm.taobao.org/nopt/download/nopt-2.1.2.tgz#6cccd977b80132a07731d6e8ce58c2c8303cf9af"
@@ -720,6 +730,10 @@ unpipe@1.0.0:
 util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "http://registry.npm.taobao.org/util-deprecate/download/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
+
+uuid:
+  version "3.0.1"
+  resolved "http://registry.npm.taobao.org/uuid/download/uuid-3.0.1.tgz#6544bba2dfda8c1cf17e629a3a305e2bb1fee6c1"
 
 validator@^7.0.0:
   version "7.0.0"

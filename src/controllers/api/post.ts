@@ -34,8 +34,8 @@ export class Posts {
    * @returns {Promise<void>}
    */
   @Put('/:postId')
-  public async getPost(@Param('postId') postId: string) {
-
+  public async updatePost(@Param('postId') postId: string) {
+    return 1
   }
   /**
    * 获取 post的全部commit

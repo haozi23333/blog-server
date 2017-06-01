@@ -4,3 +4,5 @@
 .idea
 node_modules
 lib
+# 限制不传config文件
+/src/config/index.ts

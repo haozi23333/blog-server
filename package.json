@@ -8,7 +8,9 @@
     "dev": "tsc && node index.js"
   },
   "dependencies": {
+    "@types/uuid": "^2.0.29",
     "bluebird": "^3.5.0",
+    "class-validator": "^0.7.0",
     "koa": "^2.2.0",
     "koa-bodyparser": "^4.2.0",
     "koa-multer": "^1.0.1",
@@ -17,8 +19,10 @@
     "md5": "^2.2.1",
     "mongoose": "^4.10.4",
     "mongoose-schema-extend": "^0.2.2",
+    "node-uuid": "^1.4.8",
     "reflect-metadata": "^0.1.10",
-    "routing-controllers": "^0.7.0-alpha.14"
+    "routing-controllers": "^0.7.0-alpha.14",
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "@types/koa": "^2.0.39",

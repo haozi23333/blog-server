@@ -2,8 +2,30 @@
  * Created by haozi on 5/31/2017.
  */
 import {Document, Schema, model} from 'mongoose'
+import * as md5 from 'md5'
+import { config } from '../../config'
+
+interface IUserHistoryDevice {
+  // 设备名称
+  name: string
+  // 设备ip
+  ip: string
+  // 设备是否在线
+  online: boolean
+  // 设备UA(User-Agent)信息
+  ua: string
+  // cookie
+  cookie: string
+  createDate: Date
+  destroy: boolean
+  destroyDate?: Date
+  expiryDate: Date
+  lastLogin: Date
+}
+
 interface IUser extends Document {
   name: string
+  nickname: string
   email: string
   password: string
   // 状态
@@ -12,25 +34,13 @@ interface IUser extends Document {
   sign: string
   // 角色
   role: string[]
+  faceImage: string
   // 用来保存单个权限
   permissions: string[]
   // 最后登录时间
   lastLogin: Date
   lastLoginIp: string
-  historyDevice: [{
-    // 设备名称
-    name: string,
-    // 设备ip
-    ip: string,
-    // 设备位置
-    location: string,
-    // 设备是否在线
-    online: boolean,
-    // 设备UA(User-Agent)信息
-    ua: string,
-    // cookie
-    cookie: string
-  }]
+  historyDevice: IUserHistoryDevice[]
 }
 
 const UserSchema = new Schema({
@@ -39,7 +49,12 @@ const UserSchema = new Schema({
   password: String,
   status: String,
   sign: String,
-  role: [String],
+  faceImage: String,
+  nickname: String,
+  role: {
+    type: [String],
+    default: [],
+  },
   permissions: [String],
   lastLogin: Date,
   lastLoginIp: String,
@@ -50,6 +65,11 @@ const UserSchema = new Schema({
       location: String,
       online: Boolean,
       cookie: String,
+      ua: String,
+      destroy: Boolean,
+      createDate: Date,
+      destroyDate: Date,
+      lastLogin: Date,
     }],
   },
 })
@@ -57,6 +77,7 @@ const UserSchema = new Schema({
 const userModule = model<IUser>('user', UserSchema)
 
 export {
+  IUserHistoryDevice,
   IUser,
   userModule,
 }
