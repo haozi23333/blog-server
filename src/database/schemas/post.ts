@@ -5,12 +5,19 @@ import * as md5 from 'md5'
 import {Document, model, Schema } from 'mongoose'
 
 interface IPost extends Document {
+  // 文章ID
   postId: string
+  // 当前版本
   ref: string
+  // 文章标题
   title: string
+  // 标签
   tags: string[]
+  // 文章图片(显示在文章列表用的) 储存
   image: string
+  // markdown 储存
   markdown: string
+  // 预编译好的html 储存
   html: string
   publish: boolean
   createDate: Date
@@ -31,100 +38,29 @@ interface ICommit extends Document {
 }
 
 const CommitSchena = new Schema({
-  id: {
-    type: String,
-    required: false,
-  },
-  message: {
-    type: String,
-    required: true,
-  },
-  date: {
-    type: Date,
-    required: false,
-    default: Date.now,
-  },
-  markdown: {
-    type: String,
-    required: true,
-  },
-  hash: {
-    type: String,
-    required: false,
-    default: '',
-  },
+  id: String,
+  message: String,
+  date: Date,
+  markdown: String,
+  hash: String,
 })
 
 const PostSchema = new Schema({
-  // 文章ID
-  postId: {
-    type: String,
-    required: true,
-  },
-  // 当前版本
-  ref: {
-    type: String,
-    required: true,
-  },
-  // 文章标题
-  title: {
-    type: String,
-    required: true,
-  },
-  // 标签
-  tags: {
-    type: [String],
-    required: true,
-  },
-  // 文章图片(显示在文章列表用的) 储存
-  image: {
-    type: String,
-    required: true,
-  },
-  // markdown 储存
-  markdown: {
-    type: String,
-    required: true,
-  },
-  // 预编译好的html 储存
-  html: {
-    type: String,
-    required: true,
-  },
-  // markdown 储存
-  publish: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
-  createDate: {
-    type: Date,
-    default: Date.now,
-  },
-  updateDate: {
-    type: Date,
-    default: Date.now,
-  },
-  publishDate: {
-    type: Date,
-    default: Date.now,
-  },
-  createBy: {
-    type: String,
-    default: Date.now,
-  },
-  updateBy: {
-    type: String,
-    default: Date.now,
-  },
-  publishBy: {
-    type: String,
-    required: false,
-  },
-  commits: {
-    type: [CommitSchena],
-    required: false,
-  },
+  postId: String,
+  ref: String,
+  title: String,
+  tags: String,
+  image: String,
+  markdown: String,
+  html: String,
+  publish: Boolean,
+  createDate: Date,
+  updateDate: Date,
+  publishDate: Date,
+  createBy: String,
+  updateBy: String,
+  publishBy: String,
+  commits: [CommitSchena],
 })
 
 const postModel = model<IPost>('post', PostSchema)

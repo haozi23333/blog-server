@@ -25,7 +25,7 @@ export class Posts {
    */
   @Get('/:postId')
   public async getPost(@Param('postId') postId: string) {
-
+      return postId
   }
   /**
    * 更新post的信息

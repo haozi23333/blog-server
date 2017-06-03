@@ -2,8 +2,6 @@
  * Created by haozi on 5/31/2017.
  */
 import {Document, Schema, model} from 'mongoose'
-import * as md5 from 'md5'
-import { config } from '../../config'
 
 interface IUserHistoryDevice {
   // 设备名称
