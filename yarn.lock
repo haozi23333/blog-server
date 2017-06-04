@@ -392,6 +392,10 @@ koa-router@^7.2.0:
     methods "^1.0.1"
     path-to-regexp "^1.1.1"
 
+koa-useragent@^1.0.0:
+  version "1.0.0"
+  resolved "http://registry.npm.taobao.org/koa-useragent/download/koa-useragent-1.0.0.tgz#12b47e1828fc11b060a6eab684d49b198352d053"
+
 koa@^2.2.0:
   version "2.2.0"
   resolved "http://registry.npm.taobao.org/koa/download/koa-2.2.0.tgz#b055933187849d540ad8b9f731baaa4be97c652d"

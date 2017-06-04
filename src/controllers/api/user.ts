@@ -6,17 +6,23 @@ import {ValidationUserLoginForUsernamAndPassword} from '../validation/api/user'
 import {Ctx} from "routing-controllers/decorator/Ctx"
 import {Context} from "koa"
 import {User} from '../../api/users/user'
-import {IUser} from "../../database/schemas/user";
-
-interface AuthContext extends Context{
-  user: User
-}
+import {AppContext, AuthContext} from "../../interfaces/KoaContext";
 
 @Controller('/api/users')
 export class UserController {
   @Get('/login')
-  public async login(@Body() body: ValidationUserLoginForUsernamAndPassword, @Ctx() ctx: Context) {
+  public async login(@Body() body: ValidationUserLoginForUsernamAndPassword, @Ctx() ctx: AppContext) {
+      try {
+        const user = new User()
+        await user.login({
+          username: body.name,
+          passpwrd: body.passowd,
+          ua: JSON.stringify(ctx.userAgent),
+          ip: ctx.realIp
+        })
+      } catch (e) {
 
+      }
   }
 
   @Put('/:user')
