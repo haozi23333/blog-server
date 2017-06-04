@@ -1,5 +1,4 @@
 import {KoaMiddlewareInterface, Middleware} from "routing-controllers"
-import {Context} from "koa"
 import {IAppContext} from "../interfaces/KoaContext"
 /**
  * Created by haozi on 2017/06/04.
@@ -9,9 +8,10 @@ import {IAppContext} from "../interfaces/KoaContext"
     type: "before",
     priority: 1
 })
-export class GetRealIp implements KoaMiddlewareInterface {
+export class GetCookie implements KoaMiddlewareInterface {
     public async use(ctx: IAppContext, next?: (err?: any) => Promise<any>) {
-        ctx.realIp = ctx.get('x-real-ip') || '?:?:?:?'
+        console.log(ctx.get('ke'))
+        ctx.haozi = ctx.get('ke') || null
         await next()
     }
 }

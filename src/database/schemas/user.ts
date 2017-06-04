@@ -26,7 +26,7 @@ interface IUser extends Document {
   nickname: string
   email: string
   password: string
-  // 状态
+  // 状态/
   status: string,
   // 签名
   sign: string
@@ -67,6 +67,7 @@ const UserSchema = new Schema({
       destroy: Boolean,
       createDate: Date,
       destroyDate: Date,
+      expiryDate: Date,
       lastLogin: Date,
     }],
   },

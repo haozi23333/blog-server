@@ -31,7 +31,7 @@ class Post {
     }
 
     public async createPost(createUser: string) {
-        //todo 等等在写
+        // todo 等等在写
         this._post = new postModel({
             postId: (getApp().getPosts().getAll().length + 1).toString(),
             ref: '',
@@ -70,6 +70,10 @@ class Post {
         }
     }
 
+    /**
+     * 发布
+     * @returns {Promise<void>}
+     */
     public async publish() {
         try {
             this.setPrototype({
@@ -80,6 +84,10 @@ class Post {
         }
     }
 
+    /**
+     * 取消发布状态
+     * @returns {Promise<void>}
+     */
     public async unPublish() {
         try {
             this.setPrototype({

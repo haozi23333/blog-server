@@ -4,8 +4,8 @@
 import {Controller, Param, Body, Get, Post, Put, Delete } from "routing-controllers"
 import {postModel, commitModel} from '../../database/schemas/post'
 import * as md5 from 'md5'
-import {AppContext} from "../../interfaces/KoaContext";
-import {Ctx} from "routing-controllers/decorator/Ctx";
+import {IAppContext} from "../../interfaces/KoaContext"
+import {Ctx} from "routing-controllers/decorator/Ctx"
 
 @Controller('/api/posts')
 export class Posts {
@@ -15,7 +15,7 @@ export class Posts {
    * @returns {Promise<string>}
    */
   @Post('/')
-  public async createPost(@Ctx() ctx: AppContext) {
+  public async createPost(@Ctx() ctx: IAppContext) {
     return `ip -> ${ctx.realIp}`
   }
 

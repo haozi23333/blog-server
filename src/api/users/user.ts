@@ -10,7 +10,6 @@ import {config} from "../../config/config"
 import md5 = require("md5")
 import {v4} from 'uuid'
 import {assign} from 'lodash'
-import {ICookies} from "cookies";
 
 export interface ILoginOption {
   // 用户名
@@ -138,15 +137,16 @@ export class User {
    * @returns {Promise<void>}
    */
   public async logout(cookie?: string) {
-    if(cookie) {
+    if (!cookie) {
       this.user.historyDevice = []
     }
     this.user.historyDevice = this.getHistoryDevice().filter((v) => {
-      if(v.cookie === cookie)
+      if (v.cookie === cookie) {
         return false
+      }
       return true
     })
-    this.user.save()
+    await this.user.save()
   }
 
   // /**
@@ -178,7 +178,7 @@ export class User {
       lastLoginIp: '',
       historyDevice: [],
     })
-    try{
+    try {
       this.setUser(await newUser.save())
       return {
         success: 'createUer',
@@ -202,7 +202,7 @@ export class User {
       virtuals: false
     }) as IUser
     delete userObj.password
-    if (!isAuth){
+    if (!isAuth) {
       delete userObj.historyDevice
     }
     return userObj
@@ -212,7 +212,7 @@ export class User {
    * 设置用户信息
    */
   public async setInfo(obj: any) {
-    try{
+    try {
       assign(this.user, obj)
       await this.user.save()
     } catch (e) {
@@ -226,7 +226,7 @@ export class User {
    * @returns {Promise<boolean>}
    */
   public async setPermission(permission: string) {
-    if(!this.checkPermission(permission)){
+    if ( !this.checkPermission(permission)) {
       this.getUser().permissions.push(permission)
       await this.getUser().save()
     }
@@ -239,8 +239,8 @@ export class User {
    * @returns {boolean}
    */
   public checkPermission(permission: string) {
-    for(let i = 0; i < this.getUser().permissions.length; i++) {
-      if (this.getUser().permissions[i] == permission) {
+    for (let i = 0; i < this.getUser().permissions.length; i++) {
+      if (this.getUser().permissions[i] === permission) {
         return true
       }
     }
@@ -269,6 +269,6 @@ export class User {
    * @returns {string}
    */
   public static genCookie(info: ILoginOption): string {
-    return `${info.username}:` + v4().toString().replace(/\-/g, '')
+    return `${new Buffer(info.username).toString('base64')}:` + v4().toString().replace(/\-/g, '')
   }
 }

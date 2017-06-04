@@ -6,24 +6,10 @@ import {ValidationUserLoginForUsernamAndPassword} from '../validation/api/user'
 import {Ctx} from "routing-controllers/decorator/Ctx"
 import {Context} from "koa"
 import {User} from '../../api/users/user'
-import {AppContext, AuthContext} from "../../interfaces/KoaContext";
+import {IAppContext, IAuthContext} from "../../interfaces/KoaContext";
 
 @Controller('/api/users')
 export class UserController {
-  @Get('/login')
-  public async login(@Body() body: ValidationUserLoginForUsernamAndPassword, @Ctx() ctx: AppContext) {
-      try {
-        const user = new User()
-        await user.login({
-          username: body.name,
-          passpwrd: body.passowd,
-          ua: JSON.stringify(ctx.userAgent),
-          ip: ctx.realIp
-        })
-      } catch (e) {
-
-      }
-  }
 
   @Put('/:user')
   public async updateUser(@Param('user') user: string, @Body() body: any) {
@@ -32,22 +18,25 @@ export class UserController {
 
   @HttpCode(201)
   @Post('/')
-  public async createUser(@Param('username') username: string, @Param('userPassword') userPassword: string, @Ctx() ctx: Context) {
+  public async createUser(@Body() body: ValidationUserLoginForUsernamAndPassword, @Ctx() ctx: IAuthContext
+  ) {
     try {
-      const newUser = new User
-      return await newUser.createUser(username, userPassword)
+      if  (!ctx.user) {
+        ctx.throw(403)
+      }
+      if (ctx.user.checkPermission('admin.createUser')) {
+        ctx.throw(403)
+      }
+      const newUser = new User()
+      return await newUser.createUser(body.username, body.passowd)
     } catch (e) {
-      if(e.message === 'dbError') {
+      if (e.message === 'dbError') {
         ctx.status = 500
         return {
           error: 'INTERNAL SERVER ERROR'
         }
-      } else {
-        ctx.state = 401
-        return {
-          error: '辣鸡你有权限么'
-        }
       }
+      throw e
     }
   }
   @Get('/q')
@@ -57,7 +46,7 @@ export class UserController {
   }
 
   @Put('/logout')
-  public async logout(@Ctx() ctx: AuthContext, @Body() cookie: string) {
+  public async logout(@Ctx() ctx: IAuthContext, @Body() cookie: string) {
     ctx.user.logout()
   }
 }

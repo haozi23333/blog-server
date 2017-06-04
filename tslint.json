@@ -54,11 +54,7 @@
             "options": [120]
         },
         "member-access": true,
-        "member-ordering": {
-            "options": {
-                "order": "statics-first"
-            }
-        },
+        "member-ordering": false,
         "new-parens": true,
         "no-angle-bracket-type-assertion": true,
         "no-any": false,
@@ -132,12 +128,7 @@
                 "named": "never"
             }
         },
-        "trailing-comma": {
-            "options": {
-                "multiline": "always",
-                "singleline": "never"
-            }
-        },
+        "trailing-comma": false,
         "triple-equals": {
             "options": ["allow-null-check"]
         },

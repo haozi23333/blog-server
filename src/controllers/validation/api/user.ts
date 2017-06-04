@@ -11,7 +11,7 @@ export class ValidationUserLoginForUsernamAndPassword {
 
   @Length(1, 20)
   @IsString()
-  public name: string
+  public username: string
 
   @Length(5, 32)
   @IsString()

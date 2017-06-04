@@ -1,4 +1,4 @@
-import {IUser} from "../../database/schemas/user";
+import {IUser} from "../../database/schemas/user"
 /**
  * Created by haozi on 2017/06/04.
  */
