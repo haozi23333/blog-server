@@ -33,6 +33,7 @@ export class PostContoller {
       }
     }
   }
+  @HttpCode(200)
   @Get('/')
   public async getAllPost(@Ctx() ctx: IAuthContext) {
     return getApp().getPosts().toPostList()
