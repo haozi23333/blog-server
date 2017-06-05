@@ -2,8 +2,8 @@
  * Created by haozi on 2017/06/03.
  */
 import {IPost, postModel} from "../../database/schemas/post"
-import {getApp} from "../app";
-
+import {getApp} from "../app"
+import {Post} from "./post"
 
 class Posts {
     private posts: IPost[] = []
@@ -14,15 +14,11 @@ class Posts {
         this.posts = posts
     }
 
-    async loadData() {
-        try{
-            this.setPosts(await postModel.find({}))
-        } catch (e) {
-            throw e
-        }
+    public async loadData() {
+        this.setPosts(await postModel.find({}))
     }
 
-    public findById(id: string): IPost {
+    public findById(id: string) {
         // try {
         //     if(!Array.isArray(tag)){
         //         tag = [tag]
@@ -34,9 +30,9 @@ class Posts {
         //     }))
         // } catch (e) {
         // }
-        for(let i = 0; i < this.getPosts().length; i ++){
-            if(this.getPosts()[i]._id === id) {
-                return this.getPosts()[i]
+        for (let i = 0; i < this.getPosts().length; i ++) {
+            if (this.getPosts()[i].postId === id) {
+                return new Post(this.getPosts()[i])
             }
         }
         return null
@@ -59,7 +55,7 @@ class Posts {
         // } catch (e) {
         // }
         return this.getPosts().filter((post: IPost) => {
-            if(post.tags.indexOf(tag.toString())) {
+            if (post.tags.indexOf(tag.toString())) {
                 return post
             }
         })
@@ -99,7 +95,7 @@ class Posts {
         //     throw e
         // }
         return this.getPosts().filter((post: IPost) => {
-            if(post.title === title) {
+            if (post.title === title) {
                 return post
             }
         })
@@ -126,7 +122,7 @@ class Posts {
         //     throw e
         // }
         return this.getPosts().filter((post: IPost) => {
-            if(post.createDate >= startTime && post.createDate <= endTime){
+            if (post.createDate >= startTime && post.createDate <= endTime) {
                 return post
             }
         })
@@ -137,18 +133,42 @@ class Posts {
     }
     public clearUndefined() {
         this.posts = this.posts.filter((v) => {
-            if(v === undefined){
+            if (v === undefined) {
                 return false
             }
             return true
         })
     }
-    public async create() {
-        try{
+    public async create(username: string) {
+        const newPostId = getApp().getAllPost().length + 1
+        const newPost = new postModel({
+            postId: newPostId,
+            ref: '',
+            title: '',
+            tags: [],
+            image: '',
+            markdown: '',
+            html: '',
+            publish: '',
+            createDate: new Date(),
+            updateDate: null,
+            publishDate: null,
+            createBy: username,
+            updateBy: '',
+            publishBy: '',
+            commits: [],
+        })
+        getApp().getAllPost().push(await newPost.save())
+        return newPostId
+    }
 
-        } catch (e) {
-
-        }
+    public toPostList() {
+        return this.getPosts().map((v: IPost) => {
+            const post = v.toObject() as IPost
+            delete post.commits
+            delete post._id
+            return post
+        })
     }
 }
 

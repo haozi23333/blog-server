@@ -68,7 +68,7 @@
         "no-duplicate-super": true,
         "no-empty": true,
         "no-empty-interface": true,
-        "no-eval": true,
+        "no-eval": false,
         "no-internal-module": true,
         "no-invalid-this": false,
         "no-misused-new": true,

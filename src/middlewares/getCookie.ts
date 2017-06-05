@@ -6,11 +6,10 @@ import {IAppContext} from "../interfaces/KoaContext"
 
 @Middleware({
     type: "before",
-    priority: 1
+    priority: 100
 })
 export class GetCookie implements KoaMiddlewareInterface {
     public async use(ctx: IAppContext, next?: (err?: any) => Promise<any>) {
-        console.log(ctx.get('ke'))
         ctx.haozi = ctx.get('ke') || null
         await next()
     }

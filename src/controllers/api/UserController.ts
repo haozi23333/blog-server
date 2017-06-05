@@ -28,7 +28,7 @@ export class UserController {
         ctx.throw(403)
       }
       const newUser = new User()
-      return await newUser.createUser(body.username, body.passowd)
+      return await newUser.createUser(body.username, body.password)
     } catch (e) {
       if (e.message === 'dbError') {
         ctx.status = 500

@@ -4,6 +4,7 @@
 
 import {appModel, IApp} from "../database/schemas/app"
 import {Posts} from '../api/post/posts'
+import {IPost} from "../database/schemas/post";
 
 class App {
     app: IApp
@@ -25,7 +26,7 @@ class App {
         return this.posts
     }
     public async waitLoad() {
-        try{
+        try {
             const posts = new Posts()
             await posts.loadData()
             this.posts = posts

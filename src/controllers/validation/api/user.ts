@@ -15,7 +15,7 @@ export class ValidationUserLoginForUsernamAndPassword {
 
   @Length(5, 32)
   @IsString()
-  public passowd: string
+  public password: string
 }
 
 export class ValidationUserLoginForCookie {

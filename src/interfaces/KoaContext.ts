@@ -9,6 +9,7 @@ interface IAppContext extends Context {
     userAgent: IKoaUseragent
     realIp: string
     haozi: string | null
+    rawBody: string
 }
 
 interface IAuthContext extends IAppContext {

@@ -1,105 +1,122 @@
 /**
  * Created by haozi on 2017/06/03.
  */
-import {IPost, postModel} from '../../database/schemas/post'
+import {ICommit, IPost, postModel} from '../../database/schemas/post'
 import {getApp} from "../app"
 import {assign} from 'lodash'
+import {User} from "../users/user"
+import md5 = require("md5")
+import {commitModel} from "../../database/index"
+import {markdownToHTML} from "../../data/markdown/index"
 
 class Post {
-    private isNew: boolean = false
-
     constructor(post: IPost) {
         this.setPost(post)
     }
 
-    get post(): IPost {
-        if(this.isNew) {
-            return this._post
-        } else {
-            return getApp().getPosts().findById(this._post._id)
-        }
-    }
-
-    set post(value: IPost) {
-        this._post = value
-    }
-    private _post: IPost = null
+    private post: IPost = null
 
     public setPost(post: IPost): this {
-        this._post = post
+        this.post = post
         return this
     }
 
-    public async createPost(createUser: string) {
-        // todo 等等在写
-        this._post = new postModel({
-            postId: (getApp().getPosts().getAll().length + 1).toString(),
-            ref: '',
-            title: '',
-            tags: [],
-            image: '',
-            markdown: '',
-            html: '',
-            publish: false,
-            createDate: new Date(),
-            createBy: createUser,
-            updateDate: Date,
-            updateBy: null,
-            publishDate: null,
-            publishBy: '',
-            commits: [],
-        })
-        try{
-            await this.save()
-        } catch (e) {
-            throw e
-        }
+    public getPost(): IPost {
+        return this.post
     }
-
     /**
      * 删除
      * @returns {Promise<void>}
      */
     public async delete() {
-        try{
-            await this.post.remove()
-            delete this.post
-            getApp().getPosts().clearUndefined()
-        } catch (e) {
-            throw e
-        }
+        await this.post.remove()
+        delete this.post
+        getApp().getPosts().clearUndefined()
     }
 
     /**
      * 发布
      * @returns {Promise<void>}
      */
-    public async publish() {
-        try {
-            this.setPrototype({
-                publish: true
-            })
-        } catch (e) {
-            throw e
-        }
+    public async publish(user: User) {
+        await this.setPrototype({
+            publish: true
+        }, user)
     }
 
     /**
      * 取消发布状态
      * @returns {Promise<void>}
      */
-    public async unPublish() {
-        try {
-            this.setPrototype({
-                publish: false
-            })
-        } catch (e) {
-            throw e
+    public async unPublish(user: User) {
+        await this.setPrototype({
+            publish: false
+        }, user)
+    }
+
+    public getAllCommit(): ICommit[] {
+        // todo coomit 系统
+        return this.getPost().commits
+    }
+
+    /**
+     *  通过ID获取commit
+     * @param id
+     * @returns {any}
+     */
+    public getCommitById(id: string): ICommit {
+        for (let i = 0; i < this.getAllCommit().length; i++) {
+            if (this.getAllCommit()[i].id === id) {
+                return this.getAllCommit()[i]
+            }
+        }
+        return null
+    }
+
+    /**
+     *  通过ID获取commit
+     * @param id
+     * @returns {any}
+     */
+    public getCommitByHash(hash: string): ICommit {
+        for (let i = 0; i < this.getAllCommit().length; i++) {
+            if (this.getAllCommit()[i].hash === hash) {
+                return this.getAllCommit()[i]
+            }
+        }
+        return null
+    }
+    public getCommitByHashid(hash: string): ICommit {
+        const key = hash.length === 7 ? 'id' : 'hash'
+        for (let i = 0; i < this.getAllCommit().length; i++) {
+            if (this.getAllCommit()[i][key] === hash) {
+                return this.getAllCommit()[i]
+            }
+        }
+        return null
+    }
+
+    public async deleteCommitByHash(hash: string) {
+        for (let i = 0; i < this.getAllCommit().length; i++) {
+            if (this.getAllCommit()[i].hash === hash) {
+                this.getPost().commits.splice(i, 1)
+                await this.save()
+            }
         }
     }
 
-    public async getAllCommit() {
-        // todo coomit 系统
+    public async createCommit(message: string, markdown: string) {
+        const hash = this.getMD5(markdown)
+        const newCommit = new commitModel({
+            id: hash.slice(0, 7),
+            hash,
+            message,
+            markdown,
+            date: new Date()
+        })
+        this.getPost().commits.push(newCommit)
+        await this.save()
+        return hash
     }
 
     /**
@@ -107,30 +124,42 @@ class Post {
      * @param obj
      * @returns {Promise<void>}
      */
-    public async setPrototype(obj: any) {
-        try {
-            assign(this.post, obj)
-            await this.save()
-        } catch (e) {
-            throw e
+    public async setPrototype(obj: any, user: User): Promise<this> {
+        obj = obj as IPost
+        // todo 重新处理一下 publish 的问题
+        (obj as IPost).updateDate = new Date();
+        (obj as IPost).updateBy = user.getUser().name
+        if ((obj as IPost).markdown) {
+            (obj as IPost).html = this.getHtml((obj as IPost).markdown)
         }
+        // todo 合并貌似不能这么简单吧
+        assign(this.getPost(), obj)
+        await this.save()
+        return this
     }
-
 
     /**
      * this.post.save
      * @returns {Promise<void>}
      */
     public async save() {
-        try{
-            this.isNew = false
-            await this.post.save()
-        } catch (e) {
-            throw e
-        }
+        await this.post.save()
     }
 
+    public toObject() {
+        const postData = this.getPost().toObject() as IPost
+        delete postData.commits
+        delete postData._id
+        return postData
+    }
 
+    public getMD5(data: string) {
+        return md5(data)
+    }
+
+    public getHtml(markdown: string) {
+        return markdownToHTML(markdown)
+    }
 }
 
 export {

@@ -10,12 +10,13 @@ import {config} from "../../config/config"
 import md5 = require("md5")
 import {v4} from 'uuid'
 import {assign} from 'lodash'
+import {InvaidRequestError} from "../../errors/InvaidRequestError"
 
 export interface ILoginOption {
   // 用户名
   username: string
   // 用户密码
-  passpwrd: string
+  password: string
   // 用户登录时候的 user-agent
   ua: string
   // 登录的 cookie
@@ -65,15 +66,13 @@ export class User {
    * @returns {Promise<string>}
    */
   public async login(wantLogin: ILoginOption): Promise<string> {
+    console.log(wantLogin)
     const user = await userModule.findOne({
       name: wantLogin.username,
-      password: User.genPassword(wantLogin.passpwrd),
+      password: User.genPassword(wantLogin.password),
     })
     if (!user) {
-      throw {
-        error: 'UserNameOrPasswordError',
-        message: `用户名或密码错误`,
-      }
+      throw new InvaidRequestError('用户名或密码错误')
     }
     const userCookie = User.genCookie(wantLogin)
     // 默认7天的时间的cookie

@@ -49,7 +49,7 @@ const PostSchema = new Schema({
   postId: String,
   ref: String,
   title: String,
-  tags: String,
+  tags: [String],
   image: String,
   markdown: String,
   html: String,
