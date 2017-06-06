@@ -33,7 +33,6 @@ export class SessionController {
                        }
                      }}) body: ValidationUserLoginForUsernamAndPassword,
                      @Ctx() ctx: IAppContext) {
-    console.log('122222222222222222')
     const user = new User()
     const newCookie = await user.login({
       username: body.username,
@@ -45,10 +44,7 @@ export class SessionController {
     if (ctx.haozi) {
       await user.logout(ctx.haozi)
     }
-    return {
-      success: '登录成功',
-      httpCode: httpCode.OK
-    }
+    return {}
   }
 
   @Delete('/')

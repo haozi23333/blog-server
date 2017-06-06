@@ -7,22 +7,12 @@ module.exports = () => {
     {
       type: 'lang',
       filter: (text: string) => {
-        const imageMarkdownRegex = /^(?:\{(.*?)\})?!(?:\[([^\n\]]*)\])(?:\(([^\n\]]*)\))?$/gim
+        const imageMarkdownRegex = /(?:\{(.*?)\})?!(?:\[([^\n\]]*)\])(?:\(([^\n\]]*)\))?/gim
         // const imageMarkdownRegex = /(!\[(.*?)\]\s?\([ \t]*()<?(\S+?)>?[ \t]*((['"])(.*?)\6[ \t]*)?\))/gim
         return text.replace(imageMarkdownRegex, (match, key, alt, src) => {
           let isBigPic = false
-          console.log('key -> ' + key)
-          console.log('alt -> ' + alt)
-          console.log('src -> ' + src)
-          if (alt) {
-            isBigPic = alt.split('@').pop()
-            if (isBigPic) {
-              if (String(isBigPic) === 'small') {
-                isBigPic = false
-              } else {
-                isBigPic = true
-              }
-            }
+          if (alt && String(alt.split('@').pop()) === 'big') {
+            isBigPic = true
           }
           if (src) {
             if (src.indexOf(".pdf") === src.length - 4) {

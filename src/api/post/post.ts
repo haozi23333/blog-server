@@ -184,7 +184,7 @@ class Post {
                 return str.substring(0, index).trim()
             })
         } else {
-            if (str.length < 300) {
+            if (str.length < 500) {
                 return str
             }
         }
