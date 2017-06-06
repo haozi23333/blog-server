@@ -26,6 +26,7 @@ interface IPost extends Document {
   updateBy: string
   publishDate: Date
   publishBy: string
+  excerpt: string
   commits: ICommit[]
 }
 
@@ -52,6 +53,7 @@ const PostSchema = new Schema({
   tags: [String],
   image: String,
   markdown: String,
+  excerpt: String,
   html: String,
   publish: Boolean,
   createDate: Date,

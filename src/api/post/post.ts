@@ -130,7 +130,8 @@ class Post {
         (obj as IPost).updateDate = new Date();
         (obj as IPost).updateBy = user.getUser().name
         if ((obj as IPost).markdown) {
-            (obj as IPost).html = this.getHtml((obj as IPost).markdown)
+            (obj as IPost).html = this.getHtml((obj as IPost).markdown);
+            (obj as IPost).excerpt = this.getHtml(this.getExcerpt((obj as IPost).markdown))
         }
         // todo 合并貌似不能这么简单吧
         assign(this.getPost(), obj)
@@ -153,12 +154,41 @@ class Post {
         return postData
     }
 
+    /**
+     * 获取md5
+     * @param data
+     * @returns {string}
+     */
     public getMD5(data: string) {
         return md5(data)
     }
 
+    /**
+     * 转换Html
+     * @param markdown
+     * @returns {any}
+     */
     public getHtml(markdown: string) {
         return markdownToHTML(markdown)
+    }
+
+    /**
+     * 获取摘要
+     * @param str
+     * @returns {string}
+     */
+    public getExcerpt(str: string) {
+        const excerptRegEx = /<==\s*more\s*==>/
+        if ( excerptRegEx.test(str)) {
+            return str.replace(excerptRegEx, (match: string, index: number) => {
+                return str.substring(0, index).trim()
+            })
+        } else {
+            if (str.length < 300) {
+                return str
+            }
+        }
+        return '你是不是忘记写more了'
     }
 }
 

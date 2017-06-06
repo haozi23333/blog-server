@@ -157,6 +157,7 @@ class Posts {
             updateBy: '',
             publishBy: '',
             commits: [],
+            excerpt: ''
         })
         getApp().getAllPost().push(await newPost.save())
         return newPostId
