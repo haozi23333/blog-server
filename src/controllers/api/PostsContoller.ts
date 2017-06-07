@@ -12,7 +12,7 @@ import {NotFoundError} from "../../errors/NotFoundError"
 import {InvaidRequestError} from "../../errors/InvaidRequestError"
 import {ValidatorCreateCommit} from "../validation/api/post"
 
-@Controller('/api/post')
+@Controller('/api/posts')
 export class PostContoller {
   /**
    * 生成一个新的Post
@@ -32,6 +32,11 @@ export class PostContoller {
         postId: await posts.create(ctx.user.getUser().name)
       }
     }
+  }
+  @HttpCode(200)
+  @Get('/')
+  public async getAllPost(@Ctx() ctx: IAuthContext) {
+    return getApp().getPosts().toPostList()
   }
 
   /**

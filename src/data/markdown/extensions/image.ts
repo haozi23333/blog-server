@@ -8,7 +8,6 @@ module.exports = () => {
       type: 'lang',
       filter: (text: string) => {
         const imageMarkdownRegex = /(?:\{(.*?)\})?!(?:\[([^\n\]]*)\])(?:\(([^\n\]]*)\))?/gim
-        // const imageMarkdownRegex = /(!\[(.*?)\]\s?\([ \t]*()<?(\S+?)>?[ \t]*((['"])(.*?)\6[ \t]*)?\))/gim
         return text.replace(imageMarkdownRegex, (match, key, alt, src) => {
           let isBigPic = false
           if (alt && String(alt.split('@').pop()) === 'big') {
@@ -33,7 +32,7 @@ module.exports = () => {
       filter: (text) => {
         const checkBoxRegex = /\[(X+|\s)\]\s(.+)/igm
         return text.replace(checkBoxRegex, (str, isCheck, value, index) => {
-          return "<p><input disabled type='checkbox' " + (isCheck.toLowerCase() === "x" ? "checked" : "") + "/>" + value + "</p>"
+          return `<p><input disabled type='checkbox' ${(isCheck.toLowerCase() === "x" ? "checked" : "")}/>${value}</p>`
         })
       }
     }
