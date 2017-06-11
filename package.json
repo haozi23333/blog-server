@@ -25,6 +25,7 @@
     "reflect-metadata": "^0.1.10",
     "remark": "^7.0.1",
     "remark-github": "^7.0.0",
+    "remark-haozi-extend": "haozi23333/remark-haozi-extend",
     "remark-html": "^6.0.0",
     "routing-controllers": "^0.7.0-alpha.14",
     "uuid": "^3.0.1"

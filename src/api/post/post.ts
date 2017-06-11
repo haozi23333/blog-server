@@ -3,11 +3,11 @@
  */
 import {ICommit, IPost, postModel} from '../../database/schemas/post'
 import {getApp} from "../app"
-import {assign} from 'lodash'
+import {merge} from 'lodash'
 import {User} from "../users/user"
 import md5 = require("md5")
 import {commitModel} from "../../database/index"
-import {markdownToHTML} from "../../data/markdown/index"
+import toMarkdown from "../../data/markdown/index"
 
 class Post {
     constructor(post: IPost) {
@@ -134,7 +134,7 @@ class Post {
             (obj as IPost).excerpt = this.getHtml(this.getExcerpt((obj as IPost).markdown))
         }
         // todo 合并貌似不能这么简单吧
-        assign(this.getPost(), obj)
+        merge(this.getPost(), obj)
         await this.save()
         return this
     }
@@ -169,7 +169,7 @@ class Post {
      * @returns {any}
      */
     public getHtml(markdown: string) {
-        return markdownToHTML(markdown)
+        return toMarkdown(markdown)
     }
 
     /**

@@ -27,6 +27,10 @@ interface IFile extends Document {
   createBy: string
   // 创建日期
   createDate: Date
+  // 储存桶名称
+  bukkitName: string
+  // 储存桶路径
+  bukkitPath: string
 }
 interface ISchema extends Schema {
   extend<T>(obj: T)

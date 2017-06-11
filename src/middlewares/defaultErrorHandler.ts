@@ -6,9 +6,6 @@ import {IAppContext} from "../interfaces/KoaContext"
 import {IBadRequestError} from "../interfaces/BadRequestError"
 //
 // export function defaultErrorHandler(err: Error, ctx: IAppContext) {
-//   console.log('服务器出错了')
-//   console.log('错误信息 -> name -> ' + err.message)
-//   console.log('错误信息 -> message ->' + err.message)
 //   if (err.name === 'BadRequestError') {
 //     ctx.body = JSON.stringify({
 //       error: 'BadRequestError',

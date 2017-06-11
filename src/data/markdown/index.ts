@@ -1,20 +1,26 @@
 /**
  * Created by haozi on 6/5/2017.
  */
-import Showdown = require('showdown-ghost')
-// import {image} from './extensions/image'
-// console.log(image)
-const converterPreview =  new Showdown.converter({
-  extensions: ['table', require('./extensions/image')]
-})
-const converterHTML =  new Showdown.converter({
-  extensions: [require('./extensions/image'), 'table']
-})
+// import remark from 'remark'
+// import remarkHtml from 'remark-html'
+// // import {image} from './extensions/image'
+// // console.log(image)
+//
+// export function markdownToEditorPreviewHTML(markdown: string) {
+//   return converterPreview.makeHtml(markdown)
+// }
+//
+// export function markdownToHTML(markdown: string) {
+//   return converterHTML.makeHtml(markdown)
+// }
 
-export function markdownToEditorPreviewHTML(markdown: string) {
-  return converterPreview.makeHtml(markdown)
-}
+import remark = require('remark')
+import remarkHtml = require('remark-html')
+import qwq = require('remark-haozi-extend')
 
-export function markdownToHTML(markdown: string) {
-  return converterHTML.makeHtml(markdown)
+export default function toMarkdown(markdown) {
+  return String(remark()
+      .use(qwq)
+      .use(remarkHtml)
+      .processSync(markdown))
 }
