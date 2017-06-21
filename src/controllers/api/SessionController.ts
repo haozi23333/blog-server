@@ -40,7 +40,7 @@ export class SessionController {
       ua: JSON.stringify(ctx.userAgent),
       ip: ctx.realIp,
     })
-    ctx.set('ke', newCookie)
+    ctx.set('token', newCookie)
     if (ctx.haozi) {
       await user.logout(ctx.haozi)
     }
