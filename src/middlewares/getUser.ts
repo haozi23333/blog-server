@@ -12,9 +12,9 @@ import {User} from "../api/users/user";
 export class GetUser implements KoaMiddlewareInterface {
     public async use(ctx: IAuthContext, next?: (err?: any) => Promise<any>) {
         ctx.user = null
-        if (ctx.haozi) {
+        if (ctx.token) {
             const user = new User()
-            await user.loginForCookie(new Buffer(ctx.haozi.split(':').shift(), 'base64').toString(), ctx.haozi)
+            await user.loginForCookie(new Buffer(ctx.token.split(':').shift(), 'base64').toString(), ctx.token)
             ctx.user = user
         }
         await next()

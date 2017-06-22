@@ -27,10 +27,9 @@ export interface ILoginOption {
 
 export class User {
   private user: IUser = null
-  constructor() {
-
-  }
-
+  // constructor() {
+  // }
+  //
   /**
    * 返回??????历史设备
    * @returns {IUserHistoryDevice[]}

@@ -32,7 +32,13 @@ export class SessionController {
                          value: false
                        }
                      }}) body: ValidationUserLoginForUsernamAndPassword,
-                     @Ctx() ctx: IAppContext) {
+                     @Ctx() ctx: IAuthContext) {
+    console.log(ctx.user)
+    if (ctx.user) {
+      return {
+        message: '你已经登录了 = = '
+      }
+    }
     const user = new User()
     const newCookie = await user.login({
       username: body.username,
@@ -40,18 +46,21 @@ export class SessionController {
       ua: JSON.stringify(ctx.userAgent),
       ip: ctx.realIp,
     })
-    ctx.set('token', newCookie)
-    if (ctx.haozi) {
-      await user.logout(ctx.haozi)
-    }
+    ctx.cookies.set('token', newCookie, {
+      expires: new Date(Date.now() + 7 * 3600000 * 24),
+      httpOnly: false
+    })
+    // if (ctx.haozi) {
+    //   await user.logout(ctx.haozi)
+    // }
     return {}
   }
 
   @Delete('/')
   public async logout(@Ctx() ctx: IAuthContext) {
-    if (!ctx.haozi) {
+    if (!ctx.token) {
       throw new UnauthorizedError('你还没有登录')
     }
-    await ctx.user.logout(ctx.haozi)
+    await ctx.user.logout(ctx.token)
   }
 }

@@ -14,7 +14,7 @@ class Posts {
         this.posts = posts
     }
 
-    public async loadData() {
+    public async loadPosts() {
         this.setPosts(await postModel.find({}))
     }
 

@@ -27,10 +27,7 @@ export class PostContoller {
     }
     const posts = new Posts()
     return {
-      httpCode: httpCode.CREATED,
-      data: {
-        postId: await posts.create(ctx.user.getUser().name)
-      }
+      postId: await posts.create(ctx.user.getUser().name)
     }
   }
 
@@ -84,7 +81,7 @@ export class PostContoller {
    */
   @HttpCode(201)
   @Put('/:postId/commits')
-  public async CreateCommits(
+  public async createCommits(
     @Param('postId') postId: string,
     @Ctx() ctx: IAuthContext,
     @Body() body: ValidatorCreateCommit
@@ -123,8 +120,7 @@ export class PostContoller {
       throw new NotFoundError(`编号为 ${postId} 的 ${hashid} 的记录不存在`)
     }
     return {
-      httpCode: httpCode.OK,
-      data: JSON.stringify(commit)
+      ...commit
     }
   }
 
@@ -150,7 +146,6 @@ export class PostContoller {
     }
     await post.deleteCommitByHash(commit.hash)
     return {
-      httpCode: httpCode.NOCONTENT,
       message: `编号为 ${postId} 的 ${hashid} 的的commit已经被删除`
     }
   }

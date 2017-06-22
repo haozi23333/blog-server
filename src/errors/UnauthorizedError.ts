@@ -5,7 +5,7 @@
 import * as type from './errorType'
 import {IError} from "./IError"
 
-export class UnauthorizedError extends Error implements IError{
+export class UnauthorizedError extends Error implements IError {
   public name = type.UnauthorizedError
   public message = ''
   public errors: string[] = []

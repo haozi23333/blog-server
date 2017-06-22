@@ -8,7 +8,7 @@ import {Context} from "koa"
 interface IAppContext extends Context {
     userAgent: IKoaUseragent
     realIp: string
-    haozi: string | null
+    token: string | null
     rawBody: string
 }
 

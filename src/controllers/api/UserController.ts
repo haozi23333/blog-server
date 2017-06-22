@@ -6,15 +6,12 @@ import {ValidationUserLoginForUsernamAndPassword} from '../validation/api/user'
 import {Ctx} from "routing-controllers/decorator/Ctx"
 import {Context} from "koa"
 import {User} from '../../api/users/user'
-import {IAppContext, IAuthContext} from "../../interfaces/KoaContext";
+import {IAppContext, IAuthContext} from "../../interfaces/KoaContext"
+import {getApp} from "../../api/app"
+import {UnauthorizedError} from "../../errors/UnauthorizedError";
 
 @Controller('/api/users')
-export class UserController {
-
-  @Put('/:user')
-  public async updateUser(@Param('user') user: string, @Body() body: any) {
-
-  }
+export class UsersController {
 
   @HttpCode(201)
   @Post('/')
@@ -39,14 +36,30 @@ export class UserController {
       throw e
     }
   }
-  @Get('/q')
-  public async qwq(@Ctx() ctx: Context) {
-    ctx.status = 300
-    return 1
-  }
 
   @Put('/logout')
   public async logout(@Ctx() ctx: IAuthContext, @Body() cookie: string) {
-    ctx.user.logout()
+    await ctx.user.logout()
+  }
+}
+
+@Controller('/api/user')
+export class UserController {
+  @Put('/:username')
+  public async updateUser(@Param('username') username: string, @Body() body: any, @Ctx() ctx: IAuthContext) {
+    if (ctx.user) {
+      const user = new User()
+      user.setUser(getApp().users.getUser(username))
+      user.setInfo(body)
+    } else  {
+      throw new UnauthorizedError('没有权限')
+    }
+  }
+  @HttpCode(200)
+  @Get('/:username')
+  public async getUser(@Param('username') username: string, @Ctx() ctx: IAuthContext) {
+    const user = new User()
+    user.setUser(getApp().users.getUser(username))
+    return user.getInfo(!!ctx.user)
   }
 }
