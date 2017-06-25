@@ -59,11 +59,15 @@ export class SessionController {
     return {}
   }
 
+  @HttpCode(204)
   @Delete('/')
   public async logout(@Ctx() ctx: IAuthContext) {
     if (!ctx.token) {
       throw new UnauthorizedError('你还没有登录')
     }
+    ctx.cookies.set('token', '', {
+      expires: new Date()
+    })
     await ctx.user.logout(ctx.token)
   }
 }
