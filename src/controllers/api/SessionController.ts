@@ -48,7 +48,10 @@ export class SessionController {
     })
     ctx.cookies.set('token', newCookie, {
       expires: new Date(Date.now() + 7 * 3600000 * 24),
-      httpOnly: false
+      /**
+       * 不 http only 不安全 qwq
+       */
+      // httpOnly: false
     })
     // if (ctx.haozi) {
     //   await user.logout(ctx.haozi)
