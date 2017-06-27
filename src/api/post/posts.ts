@@ -131,14 +131,12 @@ class Posts {
     public getAll() {
         return this.posts
     }
-    public clearUndefined() {
-        this.posts = this.posts.filter((v) => {
-            if (v === undefined) {
-                return false
-            }
-            return true
-        })
+
+    public async remove(postId) {
+        await this.findById(postId).remove()
+        this.posts = this.posts.filter(v => v.postId !== postId)
     }
+
     public async create(username: string) {
         const newPostId = getApp().getAllPost().length + 1
         const newPost = new postModel({

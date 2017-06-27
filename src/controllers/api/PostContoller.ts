@@ -32,14 +32,14 @@ export class PostContoller {
   }
 
   @HttpCode(204)
-  @Get('/:postId')
-  public async deletePost(@Param('postId') postId: string) {
+  @Delete('/:postId')
+  public async removePost(@Param('postId') postId: string) {
     const post =  await getApp().getPosts().findById(postId)
     if (!post) {
       throw new NotFoundError(`这个id -> ${postId} 的post不存在`)
     }
-    await post.delete()
-    return post.toObject()
+    await getApp().getPosts().remove(postId)
+    return 'ok'
   }
 
   /**

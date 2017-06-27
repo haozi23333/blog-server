@@ -28,10 +28,8 @@ class Post {
      * 删除
      * @returns {Promise<void>}
      */
-    public async delete() {
+    public async remove() {
         await this.post.remove()
-        delete this.post
-        getApp().getPosts().clearUndefined()
     }
 
     /**
