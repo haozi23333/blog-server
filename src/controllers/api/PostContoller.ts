@@ -31,6 +31,17 @@ export class PostContoller {
     }
   }
 
+  @HttpCode(204)
+  @Get('/:postId')
+  public async deletePost(@Param('postId') postId: string) {
+    const post =  await getApp().getPosts().findById(postId)
+    if (!post) {
+      throw new NotFoundError(`这个id -> ${postId} 的post不存在`)
+    }
+    await post.delete()
+    return post.toObject()
+  }
+
   /**
    * 获取一个post的详细信息
    *
@@ -57,6 +68,9 @@ export class PostContoller {
   public async updatePost(@Param('postId') postId: string, @Ctx() ctx: IAuthContext, @Body() body: any) {
     if (!ctx.user) {
       throw new UnauthorizedError('你没有权限修改')
+    }
+    if (!getApp().getPosts().findById(postId)) {
+      throw new NotFoundError(`没有找到 id 为${postId} 的文章`)
     }
     const post = await getApp().getPosts().findById(postId).setPrototype(body, ctx.user)
     return post.toObject()

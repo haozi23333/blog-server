@@ -11,6 +11,7 @@ import md5 = require("md5")
 import {v4} from 'uuid'
 import {assign} from 'lodash'
 import {InvaidRequestError} from "../../errors/InvaidRequestError"
+import {InternalServerError} from "routing-controllers";
 
 export interface ILoginOption {
   // 用户名
@@ -64,40 +65,39 @@ export class User {
    * @param wantLogin
    * @returns {Promise<string>}
    */
-  public async login(wantLogin: ILoginOption): Promise<string> {
-    console.log(wantLogin)
+  public async login(wantLogin: ILoginOption) {
     const user = await userModule.findOne({
       name: wantLogin.username,
       password: User.genPassword(wantLogin.password),
     })
     if (!user) {
-      throw new InvaidRequestError('用户名或密码错误')
+      return false
     }
-    const userCookie = User.genCookie(wantLogin)
-    // 默认7天的时间的cookie
-    const now = new Date()
-    user.historyDevice.push({
-      name: '还没有给它起名字 _(:зゝ∠)_',
-      ip: wantLogin.ip,
-      online: true,
-      cookie: userCookie,
-      ua: wantLogin.ua,
-      destroy: false,
-      createDate: now,
-      expiryDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-      lastLogin: now,
-    })
+    this.setUser(user)
+    return true
+  }
+  public async createCookie(wantLogin: ILoginOption): Promise<string> {
     try {
-      this.setUser(await user.save())
+      const userCookie = User.genCookie(wantLogin.username)
+      // 默认7天的时间的cookie
+      const now = new Date()
+      this.getUser().historyDevice.push({
+        name: '还没有给它起名字 _(:зゝ∠)_',
+        ip: wantLogin.ip,
+        online: true,
+        cookie: userCookie,
+        ua: wantLogin.ua,
+        destroy: false,
+        createDate: now,
+        expiryDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+        lastLogin: now,
+      })
+      this.setUser(await this.getUser().save())
       return userCookie
-    }catch (e) {
-      throw {
-        error: 'dbError',
-        message: e.message,
-      }
+    } catch (e) {
+      throw new InternalServerError('服务器错误')
     }
   }
-
   /**
    * 使用cookie登录
    * @param username
@@ -266,7 +266,7 @@ export class User {
    * @param info
    * @returns {string}
    */
-  public static genCookie(info: ILoginOption): string {
-    return `${new Buffer(info.username).toString('base64')}:` + v4().toString().replace(/\-/g, '')
+  public static genCookie(username): string {
+    return `${new Buffer(username).toString('base64')}:` + v4().toString().replace(/\-/g, '')
   }
 }

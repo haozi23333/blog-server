@@ -16,7 +16,7 @@
 
 import remark = require('remark')
 import remarkHtml = require('remark-html')
-import qwq = require('remark-haozi-extend')
+import qwq from 'remark-haozi-extend'
 
 export default function toMarkdown(markdown) {
   return String(remark()

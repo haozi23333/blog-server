@@ -9,6 +9,7 @@ import {Ctx} from "routing-controllers/decorator/Ctx"
 import {IAppContext, IAuthContext} from "../../interfaces/KoaContext"
 import {httpCode} from "../../httpCode"
 import {UnauthorizedError} from "../../errors/UnauthorizedError"
+import {InvaidRequestError} from "../../errors/InvaidRequestError";
 
 
 @Controller('/api/sessions')
@@ -33,32 +34,39 @@ export class SessionController {
                        }
                      }}) body: ValidationUserLoginForUsernamAndPassword,
                      @Ctx() ctx: IAuthContext) {
-    console.log(ctx.user)
-    if (ctx.user) {
-      return {
-        message: '你已经登录了 = = '
-      }
-    }
+
     const user = new User()
-    const newCookie = await user.login({
+    const loginOption = {
       username: body.username,
       password: body.password,
       ua: JSON.stringify(ctx.userAgent),
       ip: ctx.realIp,
-    })
+    }
+    let newCookie = ''
+    if (await user.login(loginOption)) {
+      if (ctx.user) {
+        return {
+          message: '你已经登录了 = = '
+        }
+      }
+      newCookie = await user.createCookie(loginOption)
+    } else {
+      throw new InvaidRequestError('用户名或密码错误')
+    }
+    /**
+     * 设置 cookie
+     */
     ctx.cookies.set('token', newCookie, {
-      expires: new Date(Date.now() + 7 * 3600000 * 24),
-      /**
-       * 不 http only 不安全 qwq
-       */
-      // httpOnly: false
+      expires: new Date(Date.now() + 7 * 3600000 * 24)
     })
-    // if (ctx.haozi) {
-    //   await user.logout(ctx.haozi)
-    // }
     return {}
   }
 
+  /**
+   *
+   * @param ctx
+   * @returns {Promise<void>}
+   */
   @HttpCode(204)
   @Delete('/')
   public async logout(@Ctx() ctx: IAuthContext) {

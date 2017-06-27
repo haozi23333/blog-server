@@ -14,25 +14,7 @@ import {ValidatorCreateCommit} from "../validation/api/post"
 
 @Controller('/api/posts')
 export class PostContoller {
-  /**
-   * 生成一个新的Post
-   * 返回生成的postId
-   * @returns {Promise<string>}
-   */
-  @HttpCode(201)
-  @Post('/')
-  public async createPost(@Ctx() ctx: IAuthContext) {
-    if (!ctx.user) {
-      throw new UnauthorizedError('你没有权限修改')
-    }
-    const posts = new Posts()
-    return {
-      httpCode: httpCode.CREATED,
-      data: {
-        postId: await posts.create(ctx.user.getUser().name)
-      }
-    }
-  }
+
   @HttpCode(200)
   @Get('/')
   public async getAllPost(@Ctx() ctx: IAuthContext) {
