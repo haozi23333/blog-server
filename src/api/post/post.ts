@@ -178,9 +178,7 @@ class Post {
     public getExcerpt(str: string) {
         const excerptRegEx = /<==\s*more\s*==>/
         if ( excerptRegEx.test(str)) {
-            return str.replace(excerptRegEx, (match: string, index: number) => {
-                return str.substring(0, index).trim()
-            })
+            return str.split(excerptRegEx)[0]
         } else {
             if (str.length < 500) {
                 return str
