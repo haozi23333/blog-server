@@ -8,23 +8,17 @@ import {FileSchema, IFile} from "./file";
 interface IDirectory extends Document {
     // 文件夹路径
     path: string,
-    // 文件夹深度
-    deep: number,
     // 文件夹名称
     name: string
-    // 文件类型
-    type: string | 'directory',
-    childrens: IFile[],
+    childrens: string[],
     createDate: Date
 }
 
 
 const DirectorySchema = new Schema({
     path: String,
-    deep: Number,
     name: String,
-    type: String,
-    // childrens: [FileSchema || DirectorySchema],
+    childrens: [String],
     createDate: Date
 })
 

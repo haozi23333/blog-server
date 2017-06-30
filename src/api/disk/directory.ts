@@ -9,7 +9,7 @@ export default class directory {
 
     }
     public async findDir(path: string) {
-        directoryModule.findById({
+        await directoryModule.findOne({
             path: path
         })
     }
