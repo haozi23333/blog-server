@@ -21,14 +21,14 @@ async function start() {
     /**
      * 基础的错误处理
      */
-    app.use(async (ctx: IAppContext, next: () => {}) => {
-        // todo 记得改
-        try {
-            await next()
-        } catch (e) {
-            const err = new ErrorHandle(e, ctx)
-        }
-    })
+    // app.use(async (ctx: IAppContext, next: () => {}) => {
+    //     // todo 记得改
+    //     try {
+    //         await next()
+    //     } catch (e) {
+    //         const err = new ErrorHandle(e, ctx)
+    //     }
+    // })
     app.use(UA)
     app.on('error', (err, ctx) => {
         console.log(err)

@@ -7,8 +7,6 @@ import 'mongoose-schema-extend'
 interface IFile extends Document {
   // 文件名
   name: string
-  // 描述
-  desription: string
   // 文件类型 -> 压缩文件 图片 视频 之类的进行处理
   type: string
   // CDN 文件地址
@@ -21,24 +19,24 @@ interface IFile extends Document {
   tags: string[]
   // 文件hash
   hash: string
-  // 文件大小 单位KB
-  size: number
   // 创建时间
-  createBy: string
-  // 创建日期
-  createDate: Date
-  // 储存桶名称
-  bukkitName: string
-  // 储存桶路径
-  bukkitPath: string
+  createDate: Date,
+  size: number
+
 }
-interface ISchema extends Schema {
-  extend<T>(obj: T)
-}
+
 
 const FileSchema = new Schema({
-
-}) as ISchema
+  name: String,
+  type: String,
+  cdnUrl: String,
+  serverPath: String,
+  serverUrl: String,
+  tags: [String],
+  hash: String,
+  createDate: Date,
+  size: Number
+})
 
 const fileModule = model<IFile>('file', FileSchema)
 

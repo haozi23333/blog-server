@@ -167,7 +167,8 @@ class Post {
      * @returns {any}
      */
     public getHtml(markdown: string) {
-        return toMarkdown(markdown)
+        const excerptRegEx = /<==\s*more\s*==>/
+        return toMarkdown(markdown.replace(excerptRegEx, ''))
     }
 
     /**

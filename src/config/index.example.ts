@@ -4,6 +4,8 @@
 
 const config = {
   userSalt: '',
+  dbLink: '',
+  storageLocal: ''
 }
 
 export {
