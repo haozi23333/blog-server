@@ -5,7 +5,12 @@
 const config = {
   userSalt: '',
   dbLink: '',
-  storageLocal: ''
+  storageLocal: '',
+  qiniu: {
+    accessKey: '',
+    secretKey: '',
+    bukkit: ''
+  }
 }
 
 export {

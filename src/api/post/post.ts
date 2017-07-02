@@ -122,14 +122,13 @@ class Post {
      * @param obj
      * @returns {Promise<void>}
      */
-    public async setPrototype(obj: any, user: User): Promise<this> {
-        obj = obj as IPost
+    public async setPrototype(obj: IPost| any, user: User): Promise<this> {
         // todo 重新处理一下 publish 的问题
-        (obj as IPost).updateDate = new Date();
-        (obj as IPost).updateBy = user.getUser().name
-        if ((obj as IPost).markdown) {
-            (obj as IPost).html = this.getHtml((obj as IPost).markdown);
-            (obj as IPost).excerpt = this.getHtml(this.getExcerpt((obj as IPost).markdown))
+        obj.updateDate = new Date();
+        obj.updateBy = user.getUser().name
+        if (obj.markdown) {
+            obj.html = this.getHtml(obj.markdown);
+            obj.excerpt = this.getHtml(this.getExcerpt(obj.markdown))
         }
         // todo 合并貌似不能这么简单吧
         merge(this.getPost(), obj)

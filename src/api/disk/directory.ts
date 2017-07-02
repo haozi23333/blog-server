@@ -9,8 +9,14 @@ export default class directory {
 
     }
     public async findDir(path: string) {
-        await directoryModule.findOne({
+        this.dir = await directoryModule.findOne({
             path: path
         })
+        return this.dir
     }
+
+    public getDir() {
+        return this.dir
+    }
+
 }
