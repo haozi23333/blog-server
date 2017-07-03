@@ -14,7 +14,6 @@ interface IDirectory extends Document {
     createDate: Date
 }
 
-
 const DirectorySchema = new Schema({
     path: String,
     name: String,

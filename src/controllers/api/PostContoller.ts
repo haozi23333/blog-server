@@ -25,13 +25,16 @@ export default class PostContoller {
       throw new UnauthorizedError('你没有权限修改')
     }
     const post = new PostModel({
+      po
     })
-    // const posts = new Posts()
-    // return {
-    //   postId: await posts.create(ctx.user.getUser().name)
-    // }
   }
 
+  /**
+   * 删除文章
+   * @param postId
+   * @param ctx
+   * @returns {Promise<{message: string}>}
+   */
   @HttpCode(204)
   @Delete('/:postId')
   public async removePost(@Param('postId') postId: string, @Ctx() ctx: IAuthContext) {
@@ -77,6 +80,4 @@ export default class PostContoller {
     const post = await getApp().getPosts().findById(postId).setPrototype(body, ctx.user)
     return post.toObject()
   }
-
-
 }
