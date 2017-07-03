@@ -4,16 +4,15 @@
 import {Controller, Param, Body, Get, Post, Put, Delete, HttpCode } from "routing-controllers"
 import {IAuthContext} from "../../interfaces/KoaContext"
 import {Ctx} from "routing-controllers/decorator/Ctx"
-import {Posts} from "../../api/post/posts"
-import {httpCode} from "../../httpCode"
+// import {Posts} from "../../api/post/posts"
 import {UnauthorizedError} from "../../errors/UnauthorizedError"
-import {getApp} from "../../api/app"
+// import {getApp} from "../../api/app"
 import {NotFoundError} from "../../errors/NotFoundError"
-import {InvaidRequestError} from "../../errors/InvaidRequestError"
-import {ValidatorCreateCommit} from "../validation/api/post"
+import {IPost, PostModel} from '../../models'
+import {default as _Postapi} from '../../api/Post'
 
 @Controller('/api/post')
-export class PostContoller {
+export default class PostContoller {
   /**
    * 生成一个新的Post
    * 返回生成的postId
@@ -25,21 +24,24 @@ export class PostContoller {
     if (!ctx.user) {
       throw new UnauthorizedError('你没有权限修改')
     }
-    const posts = new Posts()
-    return {
-      postId: await posts.create(ctx.user.getUser().name)
-    }
+    const post = new PostModel({
+    })
+    // const posts = new Posts()
+    // return {
+    //   postId: await posts.create(ctx.user.getUser().name)
+    // }
   }
 
   @HttpCode(204)
   @Delete('/:postId')
-  public async removePost(@Param('postId') postId: string) {
-    const post =  await getApp().getPosts().findById(postId)
-    if (!post) {
-      throw new NotFoundError(`这个id -> ${postId} 的post不存在`)
+  public async removePost(@Param('postId') postId: string, @Ctx() ctx: IAuthContext) {
+    if (!ctx.user) {
+      throw new UnauthorizedError('你没有权限修改')
     }
-    await getApp().getPosts().remove(postId)
-    return 'ok'
+    await PostModel.remove({postId})
+    return {
+      message: 'ok'
+    }
   }
 
   /**
@@ -75,92 +77,6 @@ export class PostContoller {
     const post = await getApp().getPosts().findById(postId).setPrototype(body, ctx.user)
     return post.toObject()
   }
-  /**
-   * 获取 post的全部commit
-   * @returns {Promise<void>}
-   */
-  @HttpCode(200)
-  @Get('/:postId/commits')
-  public async getAllCommits(@Param('postId') postId: string) {
-    const post =  await getApp().getPosts().findById(postId)
-    if (!post) {
-      throw new NotFoundError(`这个id -> ${postId} 的post不存在`)
-    }
-    return post.getAllCommit()
-  }
 
-  /**
-   * 创建一个新的 Commit
-   * @returns {Promise<void>}
-   */
-  @HttpCode(201)
-  @Put('/:postId/commits')
-  public async createCommits(
-    @Param('postId') postId: string,
-    @Ctx() ctx: IAuthContext,
-    @Body() body: ValidatorCreateCommit
-  ) {
-    if (!ctx.user) {
-      throw new UnauthorizedError('没有权限')
-    }
-    const post =  await getApp().getPosts().findById(postId)
-    if (!post) {
-      throw new NotFoundError(`这个id -> ${postId} 的post不存在`)
-    }
-    const hash = await post.createCommit(body.message, body.markdown)
-    return {
-      hash
-    }
-  }
 
-  /**
-   * 获取post的单条commit by hash
-   * @returns {Promise<void>}
-   */
-  @HttpCode(200)
-  @Get('/:postId/commits/:hashid')
-  public async getCommitsByHash(@Param('postId') postId: string, @Param('hashid') hashid: string) {
-    const post =  await getApp().getPosts().findById(postId)
-    if (!post) {
-      throw new NotFoundError(`这个id -> ${postId} 的post不存在`)
-    }
-    if (hashid.length !== 7) {
-      if (hashid.length !== 32) {
-        throw new InvaidRequestError('hash的长度是7位或者32位')
-      }
-    }
-    const commit = post.getCommitByHashid(hashid)
-    if (!commit) {
-      throw new NotFoundError(`编号为 ${postId} 的 ${hashid} 的记录不存在`)
-    }
-    return {
-      ...commit
-    }
-  }
-
-  /**
-   * 删除post的单条commit记录 by hash
-   * @returns {Promise<void>}
-   */
-  @HttpCode(204)
-  @Delete('/:postId/commits/:hash')
-  public async deleteCommitsByHash(@Param('postId') postId: string, @Param('hashid') hashid: string) {
-    const post =  await getApp().getPosts().findById(postId)
-    if (!post) {
-      throw new NotFoundError(`这个id -> ${postId} 的post不存在`)
-    }
-    if (hashid.length !== 7) {
-      if (hashid.length !== 32) {
-        throw new InvaidRequestError('hash的长度是7位或者32位')
-      }
-    }
-    const commit = post.getCommitByHashid(hashid)
-    if (!commit) {
-      throw new NotFoundError(`编号为 ${postId} 的 ${hashid} 的记录不存在`)
-    }
-    await post.deleteCommitByHash(commit.hash)
-    return {
-      message: `编号为 ${postId} 的 ${hashid} 的的commit已经被删除`
-    }
-  }
 }
