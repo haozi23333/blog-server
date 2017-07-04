@@ -5,10 +5,6 @@
 interface IUserHistoryDevice {
     // 设备名称
     name: string
-    // 设备ip
-    ip: string
-    // 设备UA(User-Agent)信息
-    ua: string
     // cookie
     cookie: string
     createDate: Date

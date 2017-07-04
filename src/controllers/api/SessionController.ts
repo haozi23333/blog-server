@@ -3,13 +3,13 @@
  */
 
 import {Body, BodyParam, Controller, Delete, Get, HttpCode, Post, Put} from "routing-controllers"
-import {User} from "../../api/users/user"
 import {ValidationUserLoginForUsernamAndPassword} from "../validation/api/user"
 import {Ctx} from "routing-controllers/decorator/Ctx"
 import {IAppContext, IAuthContext} from "../../interfaces/KoaContext"
 import {httpCode} from "../../httpCode"
 import {UnauthorizedError} from "../../errors/UnauthorizedError"
 import {InvaidRequestError} from "../../errors/InvaidRequestError";
+import {UserModule} from "../../models/User";
 
 
 @Controller('/api/sessions')
@@ -25,7 +25,7 @@ export class SessionController {
    * @param ctx
    * @returns {Promise<any>}
    */
-  @HttpCode(201)
+  @HttpCode(httpCode.CREATED)
   @Post('/')
   public async login(@Body({validate: {
                        validationError: {
@@ -35,47 +35,37 @@ export class SessionController {
                      }}) body: ValidationUserLoginForUsernamAndPassword,
                      @Ctx() ctx: IAuthContext) {
 
-    const user = new User()
-    const loginOption = {
-      username: body.username,
-      password: body.password,
-      ua: JSON.stringify(ctx.userAgent),
-      ip: ctx.realIp,
-    }
-    let newCookie = ''
-    if (await user.login(loginOption)) {
-      if (ctx.user) {
-        return {
-          message: '你已经登录了 = = '
-        }
-      }
-      newCookie = await user.createCookie(loginOption)
-    } else {
+    const cookie = await UserModule.login(body.username, body.password)
+    if (!cookie) {
       throw new InvaidRequestError('用户名或密码错误')
     }
-    /**
-     * 设置 cookie
-     */
-    ctx.cookies.set('token', newCookie, {
-      expires: new Date(Date.now() + 7 * 3600000 * 24)
+    ctx.cookies.set('token',  cookie, {
+      expires: new Date(Date.now() + 7 * 3600000 * 24),
+      httpOnly: true,
     })
-    return {}
+    return {
+      message: 'ok'
+    }
   }
 
   /**
-   *
+   * 登出
    * @param ctx
-   * @returns {Promise<void>}
+   * @param cookie
+   * @returns {Promise<{message: string}>}
    */
-  @HttpCode(204)
-  @Delete('/')
-  public async logout(@Ctx() ctx: IAuthContext) {
-    if (!ctx.token) {
-      throw new UnauthorizedError('你还没有登录')
+  @HttpCode(httpCode.NOCONTENT)
+  @Delete('/logout')
+  public async logout(@Ctx() ctx: IAuthContext, @Body() cookie: string) {
+    if( ctx.user) {
+      throw new UnauthorizedError('你没有登录')
     }
-    ctx.cookies.set('token', '', {
-      expires: new Date()
-    })
-    await ctx.user.logout(ctx.token)
+    if (await UserModule.logout(ctx.user.name, ctx.token)) {
+      return {
+        message: 'ok'
+      }
+    } else {
+      throw new Error('你试图登出了一个蜜汁 token 的账户')
+    }
   }
 }

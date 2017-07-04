@@ -1,8 +1,9 @@
 /**
  * Created by haozi on 2017/07/01.
  */
-import {Schema, model} from 'mongoose'
+import {Schema, model, Model} from 'mongoose'
 import IPost from './interface/IPost'
+import {getHtml, getExcerpt} from "../tools/post";
 
 const PostSchema = new Schema({
     postId: String,
@@ -28,10 +29,24 @@ const PostSchema = new Schema({
  * 以postid降序
  */
 PostSchema.index({postId: -1})
-const PostModel = model<IPost>('post', PostSchema)
+PostSchema.statics.updateData = async function (postId: string, obj: IPost) {
+    if (obj.markdown) {
+        obj.html = getHtml(obj.markdown)
+        obj.excerpt = getHtml(getExcerpt(obj.markdown))
+    }
+    obj.updateDate = new Date()
+    return PostModel.update({postId}, obj)
+}
+
+interface IPostExtend extends Model<IPost>{
+    updateData(postId: string, obj: IPost): Promise<IPost | null>
+}
+
+const PostModel = model<IPost>('post', PostSchema) as IPostExtend
 
 export {
     IPost,
-    PostModel
+    PostModel,
+    IPostExtend
 }
 

@@ -2,7 +2,7 @@
  * Created by haozi on 2017/07/01.
  */
 
-import {model, Schema} from 'mongoose'
+import {model, Schema, Model} from 'mongoose'
 import IApp from './interface/IApp'
 
 const AppSchema = new Schema({
@@ -14,10 +14,13 @@ const AppSchema = new Schema({
     postId: Number
 })
 
+interface IAppExtend extends Model<IApp> {
+}
 
-const AppModel = model<IApp>('postCommit', AppSchema)
+const AppModel = model<IApp>('postCommit', AppSchema) as IAppExtend
 
 export {
     IApp,
-    AppModel
+    AppModel,
+    IAppExtend
 }

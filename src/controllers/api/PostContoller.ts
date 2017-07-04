@@ -1,15 +1,14 @@
 /**
  * Created by haozi on 5/31/2017.
  */
-import {Controller, Param, Body, Get, Post, Put, Delete, HttpCode } from "routing-controllers"
+import {Controller, Param, Body, Get, Post, Put, Delete, HttpCode, ContentType} from "routing-controllers"
 import {IAuthContext} from "../../interfaces/KoaContext"
 import {Ctx} from "routing-controllers/decorator/Ctx"
-// import {Posts} from "../../api/post/posts"
-import {UnauthorizedError} from "../../errors/UnauthorizedError"
-// import {getApp} from "../../api/app"
-import {NotFoundError} from "../../errors/NotFoundError"
-import {IPost, PostModel} from '../../models'
-import {default as _Postapi} from '../../api/Post'
+import {UnauthorizedError} from "../../errors"
+import {PostModel} from '../../models'
+import {httpCode} from "../../httpCode"
+import IPost from "../../models/interface/IPost";
+import {AppModel} from "../../models/App";
 
 @Controller('/api/post')
 export default class PostContoller {
@@ -18,15 +17,17 @@ export default class PostContoller {
    * 返回生成的postId
    * @returns {Promise<string>}
    */
-  @HttpCode(201)
+  @HttpCode(httpCode.CREATED)
   @Post('/')
   public async createPost(@Ctx() ctx: IAuthContext) {
     if (!ctx.user) {
       throw new UnauthorizedError('你没有权限修改')
     }
-    const post = new PostModel({
-      po
-    })
+    const postId =  (await AppModel.findOneAndUpdate({ appName: 'blog'}, {$inc: {
+      totalPosts: 1
+    }}))
+    const post = new PostModel({postId})
+    return (await post.save()).toObject()
   }
 
   /**
@@ -35,7 +36,7 @@ export default class PostContoller {
    * @param ctx
    * @returns {Promise<{message: string}>}
    */
-  @HttpCode(204)
+  @HttpCode(httpCode.NOCONTENT)
   @Delete('/:postId')
   public async removePost(@Param('postId') postId: string, @Ctx() ctx: IAuthContext) {
     if (!ctx.user) {
@@ -48,36 +49,30 @@ export default class PostContoller {
   }
 
   /**
-   * 获取一个post的详细信息
-   *
+   * 查询 post 信息
    * @param postId
-   * @returns {Promise<void>}
+   * @param postQuery
+   * @returns {Promise<Object>}
    */
-  @HttpCode(200)
+  @HttpCode(httpCode.OK)
   @Get('/:postId')
+  @ContentType('application/json')
   public async getPost(@Param('postId') postId: string) {
-    const post =  await getApp().getPosts().findById(postId)
-    if (!post) {
-      throw new NotFoundError(`这个id -> ${postId} 的post不存在`)
-    }
-    return post.toObject()
+    return (await PostModel.findOne({postId})).toObject()
   }
+
   /**
    * 更新post的信息
    * 返回新的post信息
    * @param postId
    * @returns {Promise<void>}
    */
-  @HttpCode(201)
+  @HttpCode(httpCode.CREATED)
   @Put('/:postId')
   public async updatePost(@Param('postId') postId: string, @Ctx() ctx: IAuthContext, @Body() body: any) {
     if (!ctx.user) {
       throw new UnauthorizedError('你没有权限修改')
     }
-    if (!getApp().getPosts().findById(postId)) {
-      throw new NotFoundError(`没有找到 id 为${postId} 的文章`)
-    }
-    const post = await getApp().getPosts().findById(postId).setPrototype(body, ctx.user)
-    return post.toObject()
+    return (await PostModel.updateData(postId, (body as IPost))).toObject()
   }
 }

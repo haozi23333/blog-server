@@ -2,21 +2,12 @@ import {connect} from 'mongoose'
 import {useKoaServer} from "routing-controllers"
 import "reflect-metadata"
 import {config} from './config'
-import {App, getApp} from './api/app'
 import * as Koa from 'koa'
 import UA = require('koa-useragent')
-import {ErrorHandle} from './errors/ErrorHandle'
-import {IAppContext} from "./interfaces/KoaContext"
 
 const db = connect(config.dbLink)
 
 async function start() {
-    getApp()
-    try {
-        await getApp().waitLoad()
-    } catch (e) {
-        console.log('数据库连接失败')
-    }
     const app = new Koa()
     /**
      * 基础的错误处理
@@ -30,9 +21,9 @@ async function start() {
     //     }
     // })
     app.use(UA)
-    app.on('error', (err, ctx) => {
-        console.log(err)
-    })
+    // app.on('error', (err, ctx) => {
+    //     console.log(err)
+    // })
     useKoaServer(app, {
         controllers: [__dirname + "/controllers/**/*.js"],
         middlewares: [__dirname + "/middlewares/**/*.js"],
