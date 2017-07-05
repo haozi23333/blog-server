@@ -15,19 +15,40 @@ export default class PostsContoller {
 
     @Get('/')
     public async getAllPost(@Ctx() ctx: IAppContext) {
-        let query = PostModel.find({})
+        const query = PostModel.find({})
         return (await this.queryHandle(query, ctx.query)).map(v => v.toJSON())
     }
+
     /**
      * 查询 post 信息
-     * @param postId
-     * @param postQuery
+     * 可以发送 /api/posts/1,2,3,4,5,6,7
+     * @param postIds
+     * @param ctx
+     * @returns {Promise<Object>}
+     */
+    @HttpCode(httpCode.OK)
+    @Get('/:postIds')
+    public async getPosts(@Param('postIds') postIds: string, @Ctx() ctx: IAppContext) {
+        const ids = postIds.split(',').filter(v => /^(\d*)$/.test(v) && v !== '')
+        if (ids.length === 0) {
+            return []
+        }
+        const query = PostModel.find({
+            postId: postIds.split(',').filter(v => /\d/g)
+        })
+        return (await this.queryHandle(query, ctx.query)).map(v => v.toJSON())
+    }
+
+    /**
+     * 查询 post 信息
+     * @param title
+     * @param ctx
      * @returns {Promise<Object>}
      */
     @HttpCode(httpCode.OK)
     @Get('/title/:title')
-    public async getPost(@Param('title') title: string, @Ctx() ctx: IAppContext) {
-        let query = PostModel.find({
+    public async getPostForTitle(@Param('title') title: string, @Ctx() ctx: IAppContext) {
+        const query = PostModel.find({
             title: new RegExp(title, 'g')
         })
         return (await this.queryHandle(query, ctx.query)).map(v => v.toJSON())
@@ -44,6 +65,9 @@ export default class PostsContoller {
 
         if (postQuery.limit && Number.isInteger(postQuery.limit)) {
             query = query.limit(postQuery.limit)
+        } else {
+            // 默认限制 10 条
+            query = query.limit(10)
         }
 
         return query
