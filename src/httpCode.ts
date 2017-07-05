@@ -18,5 +18,8 @@ export const httpCode = {
    * 删除成功
    */
   NOCONTENT: 204,
+  /**
+   *
+   */
   INVALIDREQUEST: 400
 }

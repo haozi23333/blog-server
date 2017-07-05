@@ -24,7 +24,7 @@ interface IApp extends Document {
     /**
      * 文章总数
      */
-    totalPosts: number,
+    nowPostId: number,
     /**
      * 目前最后一篇文章 id
      */

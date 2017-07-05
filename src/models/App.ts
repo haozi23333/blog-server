@@ -10,14 +10,13 @@ const AppSchema = new Schema({
     version: String,
     ref: String,
     totalUser: Number,
-    totalPosts: Number,
-    postId: Number
+    nowPostId: Number
 })
 
 interface IAppExtend extends Model<IApp> {
 }
 
-const AppModel = model<IApp>('postCommit', AppSchema) as IAppExtend
+const AppModel = model<IApp>('app', AppSchema) as IAppExtend
 
 export {
     IApp,

@@ -4,6 +4,7 @@
 
 interface IPostQuery{
     limit: number
+    isShow: string
 }
 
 export default IPostQuery

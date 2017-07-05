@@ -3,12 +3,13 @@
  */
 
 interface IUserHistoryDevice {
-    // 设备名称
-    name: string
     // cookie
     cookie: string
+    // 创建时间
     createDate: Date
+    // 过期时间
     expiryDate: Date
+    // 最后一次登录
     lastLogin: Date
 }
 

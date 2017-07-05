@@ -13,9 +13,6 @@ export class GetUser implements KoaMiddlewareInterface {
     public async use(ctx: IAuthContext, next?: (err?: any) => Promise<any>) {
         ctx.user = null
         if (ctx.token) {
-            // const user = new User()
-            // await user.loginForCookie(new Buffer(ctx.token.split(':').shift(), 'base64').toString(), ctx.token)
-
             ctx.user = await UserModule.loginForCookie(new Buffer(ctx.token.split(':').shift(), 'base64').toString(), ctx.token)
         }
         await next()

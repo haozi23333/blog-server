@@ -7,12 +7,24 @@ import {getHtml, getExcerpt} from "../tools/post";
 
 const PostSchema = new Schema({
     postId: String,
-    title: String,
+    title: {
+        type: String,
+        default: '_(:зゝ∠)_'
+    },
     tags: [String],
     image: String,
-    markdown: String,
-    excerpt: String,
-    html: String,
+    markdown: {
+        type: String,
+        default: ''
+    },
+    excerpt: {
+        type: String,
+        default: '_(:зゝ∠)_'
+    },
+    html: {
+        type: String,
+        default: '_(:зゝ∠)_'
+    },
     isShow: {
         type: Boolean,
         default: false
@@ -30,6 +42,9 @@ const PostSchema = new Schema({
  */
 PostSchema.index({postId: -1})
 PostSchema.statics.updateData = async function (postId: string, obj: IPost) {
+    if (obj._id) {
+        delete obj._id
+    }
     if (obj.markdown) {
         obj.html = getHtml(obj.markdown)
         obj.excerpt = getHtml(getExcerpt(obj.markdown))
@@ -39,7 +54,7 @@ PostSchema.statics.updateData = async function (postId: string, obj: IPost) {
 }
 
 interface IPostExtend extends Model<IPost>{
-    updateData(postId: string, obj: IPost): Promise<IPost | null>
+    updateData(postId: string, obj: IPost): Promise<{ok: number}>
 }
 
 const PostModel = model<IPost>('post', PostSchema) as IPostExtend

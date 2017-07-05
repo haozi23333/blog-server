@@ -1,14 +1,16 @@
 /**
  * Created by haozi on 5/31/2017.
  */
-import {Controller, Param, Body, Get, Post, Put, Delete, HttpCode, ContentType} from "routing-controllers"
+import {Controller, Param, Body, Get, Post, Put, Delete, HttpCode, ContentType, UseInterceptor} from "routing-controllers"
 import {IAuthContext} from "../../interfaces/KoaContext"
 import {Ctx} from "routing-controllers/decorator/Ctx"
 import {UnauthorizedError} from "../../errors"
 import {PostModel} from '../../models'
 import {httpCode} from "../../httpCode"
-import IPost from "../../models/interface/IPost";
-import {AppModel} from "../../models/App";
+import IPost from "../../models/interface/IPost"
+import {AppModel} from "../../models/App"
+import {InvaidRequestError} from "../../errors/InvaidRequestError"
+import MongoInterceptor from "../../intercept/MongoInterceptor"
 
 @Controller('/api/post')
 export default class PostContoller {
@@ -18,16 +20,23 @@ export default class PostContoller {
    * @returns {Promise<string>}
    */
   @HttpCode(httpCode.CREATED)
+  @UseInterceptor(MongoInterceptor)
   @Post('/')
   public async createPost(@Ctx() ctx: IAuthContext) {
     if (!ctx.user) {
       throw new UnauthorizedError('你没有权限修改')
     }
-    const postId =  (await AppModel.findOneAndUpdate({ appName: 'blog'}, {$inc: {
-      totalPosts: 1
-    }}))
-    const post = new PostModel({postId})
-    return (await post.save()).toObject()
+    const app = await AppModel.findOne({
+      appName: 'blog'
+    })
+    const post = new PostModel({
+      postId: app.nowPostId + 1,
+      createBy: ctx.user.name
+    })
+    const newPost = await post.save()
+    app.nowPostId += 1
+    await app.save()
+    return post
   }
 
   /**
@@ -37,6 +46,7 @@ export default class PostContoller {
    * @returns {Promise<{message: string}>}
    */
   @HttpCode(httpCode.NOCONTENT)
+  @UseInterceptor(MongoInterceptor)
   @Delete('/:postId')
   public async removePost(@Param('postId') postId: string, @Ctx() ctx: IAuthContext) {
     if (!ctx.user) {
@@ -55,10 +65,11 @@ export default class PostContoller {
    * @returns {Promise<Object>}
    */
   @HttpCode(httpCode.OK)
+  @UseInterceptor(MongoInterceptor)
   @Get('/:postId')
   @ContentType('application/json')
   public async getPost(@Param('postId') postId: string) {
-    return (await PostModel.findOne({postId})).toObject()
+    return (await PostModel.findOne({postId}))
   }
 
   /**
@@ -68,11 +79,17 @@ export default class PostContoller {
    * @returns {Promise<void>}
    */
   @HttpCode(httpCode.CREATED)
+  @UseInterceptor(MongoInterceptor)
   @Put('/:postId')
   public async updatePost(@Param('postId') postId: string, @Ctx() ctx: IAuthContext, @Body() body: any) {
     if (!ctx.user) {
       throw new UnauthorizedError('你没有权限修改')
     }
-    return (await PostModel.updateData(postId, (body as IPost))).toObject()
+    const {ok} = await PostModel.updateData(postId, (body) as IPost)
+    if (ok === 1) {
+      return await PostModel.findOne({postId})
+    } else {
+      throw new InvaidRequestError('并没有完成修改')
+    }
   }
 }

@@ -13,10 +13,14 @@ import {Ctx} from "routing-controllers/decorator/Ctx";
 @Controller('/api/posts')
 export default class PostsContoller {
 
+    /**
+     * 获取全部的 post
+     * @param ctx
+     * @return Primise<IPost[]>
+     */
     @Get('/')
     public async getAllPost(@Ctx() ctx: IAppContext) {
-        const query = PostModel.find({})
-        return (await this.queryHandle(query, ctx.query)).map(v => v.toJSON())
+        return await this.queryHandle({}, ctx.query)
     }
 
     /**
@@ -29,14 +33,14 @@ export default class PostsContoller {
     @HttpCode(httpCode.OK)
     @Get('/:postIds')
     public async getPosts(@Param('postIds') postIds: string, @Ctx() ctx: IAppContext) {
+        // 懒得写查重
         const ids = postIds.split(',').filter(v => /^(\d*)$/.test(v) && v !== '')
         if (ids.length === 0) {
             return []
         }
-        const query = PostModel.find({
-            postId: postIds.split(',').filter(v => /\d/g)
-        })
-        return (await this.queryHandle(query, ctx.query)).map(v => v.toJSON())
+        return await this.queryHandle({
+            postId: ids
+        }, ctx.query)
     }
 
     /**
@@ -48,10 +52,9 @@ export default class PostsContoller {
     @HttpCode(httpCode.OK)
     @Get('/title/:title')
     public async getPostForTitle(@Param('title') title: string, @Ctx() ctx: IAppContext) {
-        const query = PostModel.find({
+        return await this.queryHandle({
             title: new RegExp(title, 'g')
-        })
-        return (await this.queryHandle(query, ctx.query)).map(v => v.toJSON())
+        }, ctx.query)
     }
 
     /**
@@ -60,8 +63,16 @@ export default class PostsContoller {
      * @param query
      * @param postQuery
      */
-    public queryHandle<T>(query: Query<T>, postQuery: IPostQuery): Query<T> {
+    public async queryHandle(obj: any, postQuery: IPostQuery): Promise<IPost[]> {
         postQuery = postQuery || {} as IPostQuery
+
+        if (postQuery.isShow) {
+            if (postQuery.isShow !== 'false') {
+                obj.isShow = true
+            }
+        }
+
+        let query = PostModel.find(obj)
 
         if (postQuery.limit && Number.isInteger(postQuery.limit)) {
             query = query.limit(postQuery.limit)
@@ -69,8 +80,13 @@ export default class PostsContoller {
             // 默认限制 10 条
             query = query.limit(10)
         }
-
-        return query
+        return (await query).map(v => {
+            const returnObj = v.toObject ? v.toObject() : {}
+            if((returnObj as IPost)._id) {
+                delete (returnObj as IPost)._id
+            }
+            return returnObj
+        }) as IPost[]
     }
 }
 

@@ -9,7 +9,6 @@ import md5 = require('md5')
 import {config} from '../config'
 import {v4} from 'uuid'
 
-
 const UserSchema = new Schema({
     name: String,
     email: String,
@@ -27,7 +26,6 @@ const UserSchema = new Schema({
     lastLoginIp: String,
     historyDevice: {
         type: [{
-            name: String,
             ip: String,
             cookie: String,
             expiryDate: Date,
@@ -67,7 +65,6 @@ UserSchema.statics.login = async function (username: string, password: string): 
         }, {
             $push: {
                 historyDevice: {
-                    name: '还没有给它起名字 _(:зゝ∠)_',
                     cookie: cookie,
                     expiryDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
                     lastLogin: new Date(),
@@ -123,11 +120,9 @@ UserSchema.statics.logout = function (username: string, cookie: string) {
  * @returns {DocumentQuery<IUser, IUser>}
  */
 UserSchema.statics.loginForCookie = function (username: string, cookie: string) {
-    return UserModule.findOne({
+     return UserModule.findOne({
         name: username,
-        historyDevice: {
-            cookie: cookie
-        }
+        'historyDevice.cookie': cookie
     })
 }
 
