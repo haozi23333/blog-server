@@ -60,29 +60,48 @@ export default class PostsContoller {
     /**
      * 处理后缀参数
      * limit
-     * @param query
+     * @param obj
      * @param postQuery
      */
-    public async queryHandle(obj: any, postQuery: IPostQuery): Promise<IPost[]> {
+    public async queryHandle(obj: IPostQuery | any, postQuery: IPostQuery): Promise<IPost[]> {
         postQuery = postQuery || {} as IPostQuery
 
         if (postQuery.isShow) {
-            if (postQuery.isShow !== 'false') {
+            console.log(postQuery)
+            obj.isShow = !(postQuery.isShow === 'true')
+            if (postQuery.isShow !== 'true') {
                 obj.isShow = true
+            } else {
+                obj.isShow = false
             }
+        } else {
+            obj.isShow = false
         }
 
         let query = PostModel.find(obj)
 
+        /**
+         * 分页查询
+         */
+        if (postQuery.page) {
+            if (Number(postQuery.page)) {
+                query.skip(Number(postQuery.page) * (Number(postQuery.limit) || 10))
+            }
+        }
+
+        /**
+         * 限制数量
+         */
         if (postQuery.limit && Number.isInteger(postQuery.limit)) {
             query = query.limit(postQuery.limit)
         } else {
             // 默认限制 10 条
             query = query.limit(10)
         }
+        console.log(obj)
         return (await query).map(v => {
             const returnObj = v.toObject ? v.toObject() : {}
-            if((returnObj as IPost)._id) {
+            if ((returnObj as IPost)._id) {
                 delete (returnObj as IPost)._id
             }
             return returnObj
