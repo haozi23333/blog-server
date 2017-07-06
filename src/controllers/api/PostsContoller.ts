@@ -67,15 +67,11 @@ export default class PostsContoller {
         postQuery = postQuery || {} as IPostQuery
 
         if (postQuery.isShow) {
-            console.log(postQuery)
-            obj.isShow = !(postQuery.isShow === 'true')
-            if (postQuery.isShow !== 'true') {
+            if (postQuery.isShow === 'false') {
                 obj.isShow = true
-            } else {
-                obj.isShow = false
             }
         } else {
-            obj.isShow = false
+            obj.isShow = true
         }
 
         let query = PostModel.find(obj)
@@ -98,7 +94,6 @@ export default class PostsContoller {
             // 默认限制 10 条
             query = query.limit(10)
         }
-        console.log(obj)
         return (await query).map(v => {
             const returnObj = v.toObject ? v.toObject() : {}
             if ((returnObj as IPost)._id) {
