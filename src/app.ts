@@ -18,8 +18,8 @@ async function start() {
         interceptors: [__dirname + "/interceptors/**/*.js"],
         validation: true,
         defaultErrorHandler: true,
-    }).listen(3000, () => {
-        console.log(`server listen 3000 port`)
+    }).listen(config.port, () => {
+        console.log(`server listen ${config.port} port`)
     })
 }
 

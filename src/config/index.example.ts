@@ -6,6 +6,7 @@ const config = {
   userSalt: '',
   dbLink: '',
   storageLocal: '',
+  port: 3000,
   qiniu: {
     accessKey: '',
     secretKey: '',
