@@ -94,6 +94,10 @@ export default class PostsContoller {
             // 默认限制 10 条
             query = query.limit(10)
         }
+        
+        query.sort({
+            postId: -1
+        })
         return (await query).map(v => {
             const returnObj = v.toObject ? v.toObject() : {}
             if ((returnObj as IPost)._id) {

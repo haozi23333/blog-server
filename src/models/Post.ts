@@ -6,7 +6,7 @@ import IPost from './interface/IPost'
 import {getHtml, getExcerpt} from "../tools/post";
 
 const PostSchema = new Schema({
-    postId: String,
+    postId: Number,
     title: {
         type: String,
         default: '_(:зゝ∠)_'
