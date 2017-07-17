@@ -81,7 +81,8 @@ export default class PostsContoller {
          */
         if (postQuery.page) {
             if (Number(postQuery.page)) {
-                query.skip(Number(postQuery.page) * (Number(postQuery.limit) || 10))
+                // 从0开始
+                query.skip((Number(postQuery.page) - 1)   * (Number(postQuery.limit) || 10))
             }
         }
 
@@ -94,7 +95,7 @@ export default class PostsContoller {
             // 默认限制 10 条
             query = query.limit(10)
         }
-        
+        // 按照postId 反序
         query.sort({
             postId: -1
         })

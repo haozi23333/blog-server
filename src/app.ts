@@ -23,4 +23,4 @@ async function start() {
     })
 }
 
-start().then(() => {})
+start().then(_ => {})
