@@ -4,8 +4,8 @@
 
 interface IPostQuery {
     limit: number
-    isShow: string | boolean
-    page: string | number
+    showAll: boolean
+    page: number
 }
 
 export default IPostQuery

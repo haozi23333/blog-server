@@ -33,7 +33,7 @@ export default class PostContoller {
       postId: app.nowPostId + 1,
       createBy: ctx.user.name
     })
-    const newPost = await post.save()
+    await post.save()
     app.nowPostId += 1
     await app.save()
     return post

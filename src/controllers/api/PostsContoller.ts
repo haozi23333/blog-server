@@ -20,7 +20,7 @@ export default class PostsContoller {
      */
     @Get('/')
     public async getAllPost(@Ctx() ctx: IAppContext) {
-        return await this.queryHandle({}, ctx.query)
+        return await this.getPages({}, PostsContoller.checkQueryOpt(ctx.query))
     }
 
     /**
@@ -38,9 +38,9 @@ export default class PostsContoller {
         if (ids.length === 0) {
             return []
         }
-        return await this.queryHandle({
+        return await this.getPages({
             postId: ids
-        }, ctx.query)
+        }, PostsContoller.checkQueryOpt(ctx.query) )
     }
 
     /**
@@ -52,9 +52,9 @@ export default class PostsContoller {
     @HttpCode(httpCode.OK)
     @Get('/title/:title')
     public async getPostForTitle(@Param('title') title: string, @Ctx() ctx: IAppContext) {
-        return await this.queryHandle({
+        return await this.getPages({
             title: new RegExp(title, 'g')
-        }, ctx.query)
+        }, PostsContoller.checkQueryOpt(ctx.query))
     }
 
     /**
@@ -66,25 +66,17 @@ export default class PostsContoller {
     public async queryHandle(obj: IPostQuery | any, postQuery: IPostQuery): Promise<IPost[]> {
         postQuery = postQuery || {} as IPostQuery
 
-        if (postQuery.isShow) {
-            if (postQuery.isShow === 'false') {
-                obj.isShow = true
-            }
-        } else {
-            obj.isShow = true
-        }
-
         let query = PostModel.find(obj)
 
         /**
          * 分页查询
          */
         if (postQuery.page) {
-            if (Number(postQuery.page)) {
-                // 从0开始
-                query.skip((Number(postQuery.page) - 1)   * (Number(postQuery.limit) || 10))
-            }
+            // 从0开始
+            query.skip((postQuery.page - 1)   * (postQuery.limit || 10))
         }
+
+        obj.isShow = postQuery.showAll
 
         /**
          * 限制数量
@@ -95,7 +87,7 @@ export default class PostsContoller {
             // 默认限制 10 条
             query = query.limit(10)
         }
-        // 按照postId 反序
+        // 按照postId反序
         query.sort({
             postId: -1
         })
@@ -106,6 +98,57 @@ export default class PostsContoller {
             }
             return returnObj
         }) as IPost[]
+    }
+
+    private async  getPages(obj: any,  postQuery: IPostQuery) {
+        const data = await this.queryHandle(obj, postQuery)
+        obj.isShow = postQuery.showAll
+        const count = await PostModel.count(obj)
+        let prev = ""
+        let next = ""
+        if (postQuery.page > 1 && (count - postQuery.page * postQuery.limit !== 0)) {
+            prev = `/api/posts?page=${postQuery.page - 1}&limit=${postQuery.limit}`
+        } else {
+            prev = ""
+        }
+
+        if (postQuery.page * postQuery.limit < count) {
+            next = `/api/posts?page=${postQuery.page + 1}&limit=${postQuery.limit}`
+        } else {
+            next = ""
+        }
+
+        return {
+            total: Math.ceil(count / postQuery.limit),
+            prev,
+            next,
+            data
+        }
+    }
+
+    private static checkQueryOpt(obj: IPostQuery) {
+        obj = obj || {} as IPostQuery
+        // 默认page 为1
+        if (obj.page && Number.isInteger(Number(obj.page))) {
+            obj.page = Number(obj.page)
+        } else {
+            obj.page = 1
+        }
+        // 默认limit 为 10
+        if (obj.limit && Number.isInteger(Number(obj.limit))) {
+            obj.limit = Number(obj.limit)
+        } else {
+            obj.limit = 10
+        }
+
+        if (obj.showAll) {
+            if (typeof obj.showAll !== 'boolean') {
+                obj.showAll = false
+            }
+        } else {
+            obj.showAll = false
+        }
+        return obj
     }
 }
 
