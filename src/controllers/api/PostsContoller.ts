@@ -67,7 +67,6 @@ export default class PostsContoller {
         postQuery = postQuery || {} as IPostQuery
 
         let query = PostModel.find(obj)
-
         /**
          * 分页查询
          */
@@ -75,8 +74,6 @@ export default class PostsContoller {
             // 从0开始
             query.skip((postQuery.page - 1)   * (postQuery.limit || 10))
         }
-
-        obj.isShow = postQuery.showAll
 
         /**
          * 限制数量
@@ -100,9 +97,9 @@ export default class PostsContoller {
         }) as IPost[]
     }
 
-    private async  getPages(obj: any,  postQuery: IPostQuery) {
+    private async getPages(obj: any,  postQuery: IPostQuery) {
+        obj.isShow = !postQuery.showAll
         const data = await this.queryHandle(obj, postQuery)
-        obj.isShow = postQuery.showAll
         const count = await PostModel.count(obj)
         let prev = ""
         let next = ""
@@ -117,7 +114,7 @@ export default class PostsContoller {
         } else {
             next = ""
         }
-
+        console.log(`count -> ${count}`)
         return {
             total: Math.ceil(count / postQuery.limit),
             prev,
@@ -141,10 +138,8 @@ export default class PostsContoller {
             obj.limit = 10
         }
 
-        if (obj.showAll) {
-            if (typeof obj.showAll !== 'boolean') {
-                obj.showAll = false
-            }
+        if (obj.showAll && String(obj.showAll) === 'true') {
+                obj.showAll = true
         } else {
             obj.showAll = false
         }

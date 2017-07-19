@@ -74,9 +74,10 @@ export default class PostContoller {
 
   /**
    * 更新post的信息
-   * 返回新的post信息
    * @param postId
-   * @returns {Promise<void>}
+   * @param ctx
+   * @param body
+   * @returns {Promise<IPost>}
    */
   @HttpCode(httpCode.CREATED)
   @UseInterceptor(MongoInterceptor)
