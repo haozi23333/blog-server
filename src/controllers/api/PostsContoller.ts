@@ -98,7 +98,12 @@ export default class PostsContoller {
     }
 
     private async getPages(obj: any,  postQuery: IPostQuery) {
-        obj.isShow = !postQuery.showAll
+        if (postQuery.showAll) {
+            delete obj.isShow
+        } else {
+            obj.isShow = true
+        }
+
         const data = await this.queryHandle(obj, postQuery)
         const count = await PostModel.count(obj)
         let prev = ""
@@ -143,6 +148,7 @@ export default class PostsContoller {
         } else {
             obj.showAll = false
         }
+
         return obj
     }
 }
