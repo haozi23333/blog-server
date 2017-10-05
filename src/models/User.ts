@@ -2,34 +2,34 @@
  * Created by haozi on 2017/07/01.
  */
 
-import {Schema, model, Model, Query} from 'mongoose'
+import { Schema, model, Model, Query } from 'mongoose'
 import IUser from './interface/IUser'
 import IUserHistoryDevice from './interface/IUserHistoryDevice'
 import md5 = require('md5')
-import {config} from '../config'
-import {v4} from 'uuid'
+import { config } from '../config'
+import { v4 } from 'uuid'
 
 const UserSchema = new Schema({
-    name: String,
-    email: String,
-    password: String,
-    status: String,
-    sign: String,
-    faceImage: String,
-    nickname: String,
+    name      : String,
+    email     : String,
+    password  : String,
+    status    : String,
+    sign      : String,
+    faceImage : String,
+    nickname  : String,
     role: {
-        type: [String],
-        default: [],
+        type    : [String],
+        default : [],
     },
-    permissions: [String],
-    lastLogin: Date,
-    lastLoginIp: String,
+    permissions : [String],
+    lastLogin   : Date,
+    lastLoginIp : String,
     historyDevice: {
         type: [{
-            ip: String,
-            cookie: String,
-            expiryDate: Date,
-            createDate: Date
+            ip         : String,
+            cookie     : String,
+            expiryDate : Date,
+            createDate : Date
         }],
     },
 })
@@ -59,21 +59,8 @@ UserSchema.methods.setPassword = function (password: string) {
  */
 UserSchema.statics.login = async function (username: string, password: string): Promise<string | null> {
     const cookie: string = UserModule.genCookie(username)
-    if (await UserModule.update({
-            name: username,
-            password: this.genPassword(password)
-        }, {
-            $push: {
-                historyDevice: {
-                    cookie: cookie,
-                    expiryDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-                    lastLogin: new Date(),
-                    createDate: new Date()
-                }
-            }
-        })) {
+    if (this.genCookie(cookie))
         return cookie
-    }
     return null
 }
 
@@ -111,7 +98,7 @@ UserSchema.statics.logout = function (username: string, cookie: string) {
                     cookie: cookie
                 }
             }
-    })
+        })
 }
 /**
  * 使用 cookie 登录
@@ -120,18 +107,43 @@ UserSchema.statics.logout = function (username: string, cookie: string) {
  * @returns {DocumentQuery<IUser, IUser>}
  */
 UserSchema.statics.loginForCookie = function (username: string, cookie: string) {
-     return UserModule.findOne({
+    return UserModule.findOne({
         name: username,
         'historyDevice.cookie': cookie
     })
 }
 
 /**
+ * 更新用户信息
+ * @param username 用户名
+ * @param password 用户密码
+ * @param cookie cookie
+ * @returns boolean
+ */
+UserSchema.statics.genCookie = async function(username: string,password: string,cookie: string){
+    const now = new Date();
+    return await UserModule.update({
+        name: username,
+        password: this.genPassword(password)
+    },{
+        $push: {
+            historyDevice: {
+                cookie     : cookie,
+                expiryDate : new Date(now.getTime() + 1000 * 60 * 60 * 24 * 7),
+                lastLogin  : now,
+                createDate : now
+            }
+        }
+    })
+}
+
+/**
  * 扩展静态方法
  */
-interface IUserExtend extends Model<IUser>{
+interface IUserExtend extends Model<IUser> {
     genPassword(password: string): string
     genCookie(username: string): string
+    genCookie(username: string,passoword: string,cookie: string):boolean
     logout(username: string, cookie: string): Query<any>
     login(username: string, cookie: string): Promise<string | null>
     loginForCookie(username: string, cookie: string): Promise<IUser>

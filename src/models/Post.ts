@@ -41,6 +41,7 @@ const PostSchema = new Schema({
  * 以postid降序
  */
 PostSchema.index({postId: -1})
+
 PostSchema.statics.updateData = async function (postId: string, obj: IPost) {
     if (obj._id) {
         delete obj._id

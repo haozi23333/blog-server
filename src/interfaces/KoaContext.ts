@@ -6,10 +6,10 @@ import {Context} from "koa"
 import {IUser} from "../models";
 
 interface IAppContext extends Context {
-    userAgent: IKoaUseragent
-    realIp: string
-    token: string | null
-    rawBody: string
+    userAgent : IKoaUseragent
+    realIp    : string
+    token     : string | null
+    rawBody   : string
 }
 
 interface IAuthContext extends IAppContext {

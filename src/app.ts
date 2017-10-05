@@ -9,18 +9,14 @@ const db = connect(config.dbLink)
 
 async function start() {
     const app = new Koa()
-
     app.use(UA)
-
     useKoaServer(app, {
         controllers: [__dirname + "/controllers/**/*.js"],
         middlewares: [__dirname + "/middlewares/**/*.js"],
         interceptors: [__dirname + "/interceptors/**/*.js"],
         validation: true,
         defaultErrorHandler: true,
-    }).listen(3000, () => {
-        console.log(`server listen 3000 port`)
-    })
+    }).listen(3000)
 }
 
-start().then(() => {})
+start().then(() => console.log(`server listen 3000 port`))

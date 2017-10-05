@@ -6,11 +6,11 @@ import {model, Schema, Model} from 'mongoose'
 import IApp from './interface/IApp'
 
 const AppSchema = new Schema({
-    appName: String,
-    version: String,
-    ref: String,
-    totalUser: Number,
-    nowPostId: Number
+    appName   : String,
+    version   : String,
+    ref       : String,
+    totalUser : Number,
+    nowPostId : Number
 })
 
 interface IAppExtend extends Model<IApp> {
