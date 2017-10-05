@@ -3,9 +3,9 @@
  */
 
 interface IPostQuery {
-    limit: number
-    isShow: string | boolean
-    page: string | number
+    limit  : number
+    isShow : string | boolean
+    page   : string | number
 }
 
 export default IPostQuery

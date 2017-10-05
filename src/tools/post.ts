@@ -9,9 +9,9 @@ import toMarkdown from '../data/markdown'
  * @param markdown
  * @returns {String}
  */
-export function  getHtml(markdown: string) {
-    const excerptRegEx = /<==\s*more\s*==>/
-    return toMarkdown(markdown.replace(excerptRegEx, ''))
+export function getHtml(markdown: string) {
+    const excerptRegExp = /<==\s*more\s*==>/
+    return toMarkdown(markdown.replace(excerptRegExp, ''))
 }
 
 /**
@@ -20,13 +20,10 @@ export function  getHtml(markdown: string) {
  * @returns {string}
  */
 export function getExcerpt(str: string) {
-    const excerptRegEx = /<==\s*more\s*==>/
-    if ( excerptRegEx.test(str)) {
-        return str.split(excerptRegEx)[0]
-    } else {
-        if (str.length < 500) {
-            return str
-        }
-    }
+    const excerptRegExp = /<==\s*more\s*==>/
+    if (excerptRegExp.test(str))
+        return str.split(excerptRegExp)[0]
+    if (str.length < 500)
+        return str
     return '你是不是忘记写more了'
 }
